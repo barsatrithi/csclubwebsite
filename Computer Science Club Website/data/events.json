@@ -1,0 +1,23 @@
+[
+  {
+    "tag": "Workshop",
+    "title": "Intro to Club Projects",
+    "date": "Date coming soon",
+    "location": "Lincoln Center campus",
+    "description": "This is a starter event entry to show how the website can render future workshops from a dynamic data source."
+  },
+  {
+    "tag": "Community",
+    "title": "Member Meetup",
+    "date": "Date coming soon",
+    "location": "Student space placeholder",
+    "description": "This slot can later be updated by e-board members when new social events or coding sessions are scheduled."
+  },
+  {
+    "tag": "Career",
+    "title": "Resume and Portfolio Review",
+    "date": "Date coming soon",
+    "location": "Room details coming soon",
+    "description": "A sample event card for professional development sessions, workshops, or club collaborations."
+  }
+]
