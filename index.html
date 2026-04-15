@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fordham CS Club | Lincoln Center</title>
+  <meta
+    name="description"
+    content="Computer Science Club at Fordham University Lincoln Center. Explore the club mission, team, events, resources, and member community."
+  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="home">
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Fordham Computer Science Club home">
+        <img src="assets/club-logo.jpeg" alt="Fordham Computer Science Club logo">
+        <span>
+          <strong>Fordham CS Club</strong>
+          <small>Lincoln Center</small>
+        </span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html" data-page-link="home">Home</a>
+        <a href="team.html" data-page-link="team">Meet the Team</a>
+        <a href="connect.html" data-page-link="connect">Connect</a>
+        <a href="resources.html" data-page-link="resources">Resources</a>
+        <a href="events.html" data-page-link="events">Events</a>
+        <a href="members.html" data-page-link="members">Members</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero section">
+        <div class="hero-backdrop" aria-hidden="true">
+          <div class="hero-glow hero-glow-left"></div>
+          <div class="hero-glow hero-glow-right"></div>
+          <img class="hero-logo-backdrop" src="assets/club-logo.jpeg" alt="">
+        </div>
+
+        <div class="hero-copy reveal">
+          <p class="eyebrow">Fordham University at Lincoln Center</p>
+          <h1>Building a club where curiosity, code, and community meet.</h1>
+          <p class="hero-text">
+            A community for students who want to learn, create, and grow through workshops, shared projects, campus resources, and meaningful collaboration.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="events.html">See Upcoming Events</a>
+            <a class="button button-secondary" href="members.html">Explore Member Pages</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section hero-summary reveal">
+        <ul class="hero-stats">
+          <li>
+            <strong>Workshops</strong>
+            <span>Hands-on learning for all levels</span>
+          </li>
+          <li>
+            <strong>Projects</strong>
+            <span>Build portfolio-ready work together</span>
+          </li>
+          <li>
+            <strong>Community</strong>
+            <span>Support, tutoring, and collaboration</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="section mission-section reveal">
+        <div class="section-heading">
+          <p class="eyebrow">Our Mission</p>
+          <h2>Make computer science more welcoming, practical, and creative on campus.</h2>
+        </div>
+        <div class="mission-grid">
+          <article class="info-card">
+            <h3>Learn in public</h3>
+            <p>From beginner-friendly workshops to deeper technical sessions, we want students to feel comfortable asking questions and exploring new tools.</p>
+          </article>
+          <article class="info-card">
+            <h3>Build with others</h3>
+            <p>The club is a place for collaboration, side projects, and shared momentum, whether you are just starting out or already building independently.</p>
+          </article>
+          <article class="info-card">
+            <h3>Support the community</h3>
+            <p>We want to connect students to tutoring, peer guidance, and useful resources that make academic and career growth more accessible.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section page-links-section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Explore The Site</p>
+          <h2>Each part of the club now has its own page.</h2>
+          <p>Use the sticky navigation above or jump into the sections below to browse the site without one long scroll.</p>
+        </div>
+        <div class="page-links-grid">
+          <a class="member-link-card reveal" href="team.html">
+            <div class="member-icon">TM</div>
+            <div>
+              <h3>Meet the Team</h3>
+              <p>View the e-board roles, leadership cards, and future photo/bio updates on a dedicated page.</p>
+            </div>
+          </a>
+          <a class="member-link-card reveal" href="connect.html">
+            <div class="member-icon member-icon-alt">CO</div>
+            <div>
+              <h3>Connect</h3>
+              <p>Keep your club links, email, Discord, and social channels together in one place.</p>
+            </div>
+          </a>
+          <a class="member-link-card reveal" href="resources.html">
+            <div class="member-icon">RS</div>
+            <div>
+              <h3>Resources</h3>
+              <p>Campus support, tutoring information, and helpful links can now live on their own page.</p>
+            </div>
+          </a>
+          <a class="member-link-card reveal" href="events.html">
+            <div class="member-icon member-icon-alt">EV</div>
+            <div>
+              <h3>Events</h3>
+              <p>Upcoming workshops and club activities now have a full page that is ready for future backend data.</p>
+            </div>
+          </a>
+          <a class="member-link-card reveal" href="members.html">
+            <div class="member-icon">MB</div>
+            <div>
+              <h3>Members</h3>
+              <p>Give the member hub its own destination so visitors can browse student pages without leaving the nav flow.</p>
+            </div>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
