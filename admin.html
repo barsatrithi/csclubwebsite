@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Events | Fordham CS Club</title>
+  <title>Admin | Fordham CS Club</title>
   <meta
     name="description"
-    content="See upcoming events, workshops, and activities from the Fordham CS Club."
+    content="Admin dashboard for managing the Fordham CS Club website content."
   >
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,7 @@
   >
   <link rel="stylesheet" href="styles.css">
 </head>
-<body data-page="events">
+<body data-page="admin">
   <div class="site-shell">
     <header class="topbar">
       <a class="brand" href="index.html" aria-label="Fordham Computer Science Club home">
@@ -44,19 +44,45 @@
 
     <main class="page-main">
       <section class="section page-hero reveal is-visible">
-        <p class="eyebrow">Upcoming Events</p>
-        <h1 data-setting="events_heading">Designed now for dynamic updates later.</h1>
-        <p class="page-intro" data-setting="events_intro">
-          The event cards below still read from a shared data source, but they now live on a dedicated page that will be much easier to connect to a future backend.
+        <p class="eyebrow">Admin Dashboard</p>
+        <h1>Manage club content from one place.</h1>
+        <p class="page-intro">
+          Sign in with an approved admin account to edit events, resources, members, team details, links, and shared site settings.
         </p>
       </section>
 
       <section class="section">
-        <div class="events-note reveal">
-          <strong>Planned direction:</strong>
-          Start with shared event data and later connect it to an admin system where e-board members can sign in and publish workshops or announcements.
+        <div class="admin-auth-panel">
+          <div class="admin-auth-copy">
+            <h2>Admin Login</h2>
+            <p>Use an email and password account created in Supabase Auth, and make sure that email is listed in the `admin_users` table.</p>
+          </div>
+
+          <form class="admin-auth-form" id="admin-login-form">
+            <label class="admin-field">
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required>
+            </label>
+            <label class="admin-field">
+              <span>Password</span>
+              <input type="password" name="password" autocomplete="current-password" required>
+            </label>
+            <div class="admin-auth-actions">
+              <button class="button button-primary" type="submit">Sign In</button>
+              <button class="button button-secondary" type="button" id="admin-logout-button" hidden>Log Out</button>
+            </div>
+            <p class="admin-status" id="admin-status" aria-live="polite"></p>
+          </form>
         </div>
-        <div class="events-grid reveal" id="events-list" aria-live="polite"></div>
+      </section>
+
+      <section class="section" id="admin-dashboard" hidden>
+        <div class="section-heading reveal is-visible">
+          <p class="eyebrow">Content Manager</p>
+          <h2>Update the site without touching raw HTML.</h2>
+          <p>Edit existing records, add new ones, or remove content that no longer belongs on the site.</p>
+        </div>
+        <div class="admin-sections" id="admin-sections"></div>
       </section>
     </main>
   </div>
@@ -64,5 +90,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="script.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>

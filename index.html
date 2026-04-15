@@ -22,8 +22,8 @@
       <a class="brand" href="index.html" aria-label="Fordham Computer Science Club home">
         <img src="assets/club-logo.jpeg" alt="Fordham Computer Science Club logo">
         <span>
-          <strong>Fordham CS Club</strong>
-          <small>Lincoln Center</small>
+          <strong data-setting="club_name">Fordham CS Club</strong>
+          <small data-setting="campus_name">Lincoln Center</small>
         </span>
       </a>
 
@@ -51,9 +51,9 @@
         </div>
 
         <div class="hero-copy reveal">
-          <p class="eyebrow">Fordham University at Lincoln Center</p>
-          <h1>Building a club where curiosity, code, and community meet.</h1>
-          <p class="hero-text">
+          <p class="eyebrow" data-setting="home_eyebrow">Fordham University at Lincoln Center</p>
+          <h1 data-setting="home_title">Building a club where curiosity, code, and community meet.</h1>
+          <p class="hero-text" data-setting="home_intro">
             A community for students who want to learn, create, and grow through workshops, shared projects, campus resources, and meaningful collaboration.
           </p>
           <div class="hero-actions">
@@ -83,7 +83,7 @@
       <section class="section mission-section reveal">
         <div class="section-heading">
           <p class="eyebrow">Our Mission</p>
-          <h2>Make computer science more welcoming, practical, and creative on campus.</h2>
+          <h2 data-setting="mission_heading">Make computer science more welcoming, practical, and creative on campus.</h2>
         </div>
         <div class="mission-grid">
           <article class="info-card">
@@ -148,6 +148,8 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

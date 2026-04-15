@@ -22,8 +22,8 @@
       <a class="brand" href="index.html" aria-label="Fordham Computer Science Club home">
         <img src="assets/club-logo.jpeg" alt="Fordham Computer Science Club logo">
         <span>
-          <strong>Fordham CS Club</strong>
-          <small>Lincoln Center</small>
+          <strong data-setting="club_name">Fordham CS Club</strong>
+          <small data-setting="campus_name">Lincoln Center</small>
         </span>
       </a>
 
@@ -45,34 +45,20 @@
     <main class="page-main">
       <section class="section page-hero reveal is-visible">
         <p class="eyebrow">Connect With Us</p>
-        <h1>All of the channels students will need!</h1>
-        <p class="page-intro">
+        <h1 data-setting="connect_heading">All of the channels students will need!</h1>
+        <p class="page-intro" data-setting="connect_intro">
           Find our discord server, instagram handle, and contact email here. Use these channels to stay in the loop on upcoming events, workshops, and club news, and to reach out with any questions or ideas you have for the club!
         </p>
       </section>
 
       <section class="section">
-        <div class="connect-grid">
-          <article class="connect-card reveal">
-            <span class="connect-label">Discord</span>
-            <h3>Server link coming soon</h3>
-            <p>Use this area for a join link, server invite button, and a short note about what members can expect there.</p>
-          </article>
-          <article class="connect-card reveal">
-            <span class="connect-label">Instagram</span>
-            <h3>@fordhamcsclub</h3>
-            <p>Perfect for event reminders, workshop recaps, and announcements.</p>
-          </article>
-          <article class="connect-card reveal">
-            <span class="connect-label">Email</span>
-            <h3>club email placeholder</h3>
-            <p>Add your official contact email here so students and campus partners know where to reach the club.</p>
-          </article>
-        </div>
+        <div class="connect-grid" id="connect-list" aria-live="polite"></div>
       </section>
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

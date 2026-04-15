@@ -202,6 +202,108 @@ async function loadResources() {
   );
 }
 
+async function loadTeamMembers() {
+  const teamList = document.getElementById("team-list");
+
+  if (!teamList) {
+    return;
+  }
+
+  const fallbackTeamMembers = [
+    {
+      badge: "01",
+      role: "President",
+      bio: "Photo and leadership bio coming soon.",
+    },
+    {
+      badge: "02",
+      role: "Vice President",
+      bio: "Photo and leadership bio coming soon.",
+    },
+    {
+      badge: "03",
+      role: "Treasurer",
+      bio: "Photo and leadership bio coming soon.",
+    },
+    {
+      badge: "04",
+      role: "Secretary",
+      bio: "Photo and leadership bio coming soon.",
+    },
+  ];
+
+  const supabaseTeamMembers = await loadTableFromSupabase("team_members", "badge, role, bio", {
+    column: "display_order",
+    ascending: true,
+  });
+
+  renderTeamMembers(
+    Array.isArray(supabaseTeamMembers) && supabaseTeamMembers.length ? supabaseTeamMembers : fallbackTeamMembers,
+    teamList
+  );
+}
+
+async function loadSiteLinks() {
+  const connectList = document.getElementById("connect-list");
+
+  if (!connectList) {
+    return;
+  }
+
+  const fallbackSiteLinks = [
+    {
+      label: "Discord",
+      title: "Server link coming soon",
+      description: "Use this area for a join link, server invite button, and a short note about what members can expect there.",
+      url: null,
+    },
+    {
+      label: "Instagram",
+      title: "@fordhamcsclub",
+      description: "Perfect for event reminders, workshop recaps, and announcements.",
+      url: null,
+    },
+    {
+      label: "Email",
+      title: "club email placeholder",
+      description: "Add your official contact email here so students and campus partners know where to reach the club.",
+      url: null,
+    },
+  ];
+
+  const supabaseSiteLinks = await loadTableFromSupabase("site_links", "label, title, description, url", {
+    column: "display_order",
+    ascending: true,
+  });
+
+  renderSiteLinks(
+    Array.isArray(supabaseSiteLinks) && supabaseSiteLinks.length ? supabaseSiteLinks : fallbackSiteLinks,
+    connectList
+  );
+}
+
+async function loadSiteSettings() {
+  const settings = await loadTableFromSupabase("site_settings", "key, value");
+
+  if (!Array.isArray(settings) || !settings.length) {
+    return;
+  }
+
+  const settingsMap = settings.reduce((accumulator, setting) => {
+    accumulator[setting.key] = setting.value;
+    return accumulator;
+  }, {});
+
+  document.querySelectorAll("[data-setting]").forEach((element) => {
+    const key = element.dataset.setting;
+    const value = settingsMap[key];
+
+    if (typeof value === "string" && value.length) {
+      element.textContent = value;
+    }
+  });
+}
+
 function renderEvents(events, container) {
   container.innerHTML = events
     .map(
@@ -221,6 +323,20 @@ function renderEvents(events, container) {
     .join("");
 }
 
+function renderTeamMembers(teamMembers, container) {
+  container.innerHTML = teamMembers
+    .map(
+      (member) => `
+        <article class="profile-card reveal is-visible">
+          <div class="profile-avatar">${member.badge}</div>
+          <h3>${member.role}</h3>
+          <p>${member.bio}</p>
+        </article>
+      `
+    )
+    .join("");
+}
+
 function renderMembers(members, container) {
   container.innerHTML = members
     .map(
@@ -232,6 +348,21 @@ function renderMembers(members, container) {
             <p>${member.description}</p>
           </div>
         </a>
+      `
+    )
+    .join("");
+}
+
+function renderSiteLinks(siteLinks, container) {
+  container.innerHTML = siteLinks
+    .map(
+      (link) => `
+        <article class="connect-card reveal is-visible">
+          <span class="connect-label">${link.label}</span>
+          <h3>${link.title}</h3>
+          <p>${link.description}</p>
+          ${link.url ? `<a class="connect-card-link" href="${link.url}" target="_blank" rel="noreferrer">Open Link</a>` : ""}
+        </article>
       `
     )
     .join("");
@@ -320,3 +451,6 @@ async function loadEventsFromSupabase() {
 loadEvents();
 loadMembers();
 loadResources();
+loadTeamMembers();
+loadSiteLinks();
+loadSiteSettings();

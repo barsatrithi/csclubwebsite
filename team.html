@@ -22,8 +22,8 @@
       <a class="brand" href="index.html" aria-label="Fordham Computer Science Club home">
         <img src="assets/club-logo.jpeg" alt="Fordham Computer Science Club logo">
         <span>
-          <strong>Fordham CS Club</strong>
-          <small>Lincoln Center</small>
+          <strong data-setting="club_name">Fordham CS Club</strong>
+          <small data-setting="campus_name">Lincoln Center</small>
         </span>
       </a>
 
@@ -45,39 +45,20 @@
     <main class="page-main">
       <section class="section page-hero reveal is-visible">
         <p class="eyebrow">Meet the Team</p>
-        <h1>print("Meet the Team")</h1>
-        <p class="page-intro">
+        <h1 data-setting="team_heading">Meet the people building the club.</h1>
+        <p class="page-intro" data-setting="team_intro">
           Meet the E-board and committee leads for the Fordham CS Club! This is the team that works behind the scenes to plan events, create resources, and build a welcoming community for all members. Check back here for photos and bios coming soon.
         </p>
       </section>
 
       <section class="section">
-        <div class="team-grid">
-          <article class="profile-card reveal">
-            <div class="profile-avatar">01</div>
-            <h3>President</h3>
-            <p>Photo and leadership bio coming soon.</p>
-          </article>
-          <article class="profile-card reveal">
-            <div class="profile-avatar">02</div>
-            <h3>Vice President</h3>
-            <p>Photo and leadership bio coming soon.</p>
-          </article>
-          <article class="profile-card reveal">
-            <div class="profile-avatar">03</div>
-            <h3>Treasurer</h3>
-            <p>Photo and leadership bio coming soon.</p>
-          </article>
-          <article class="profile-card reveal">
-            <div class="profile-avatar">04</div>
-            <h3>Secretary</h3>
-            <p>Photo and leadership bio coming soon.</p>
-          </article>
-        </div>
+        <div class="team-grid" id="team-list" aria-live="polite"></div>
       </section>
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

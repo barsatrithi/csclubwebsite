@@ -16,7 +16,7 @@ Starter website for the Computer Science Club at Fordham University Lincoln Cent
 - `styles.css`: full visual design and responsive layout
 - `script.js`: sticky mobile navigation, active page highlighting, reveal animations, and event loading
 - `supabase-config.js`: Supabase project URL and public anon key for browser reads
-- `supabase-schema.sql`: starter SQL for `members` and `resources` tables plus public read policies
+- `supabase-schema.sql`: starter SQL for `events`, `members`, `resources`, `team_members`, `site_links`, and `site_settings`
 - `data/events.json`: starter event data source
 - `members/example-member.html`: example personal member page
 - `members/how-to-build-your-page.html`: placeholder tutorial page
@@ -43,9 +43,21 @@ That means the current events UI does not need to be redesigned when you add dyn
 
 ## Supabase setup
 
-The events, members, and resources pages now try to load from Supabase first and fall back to local placeholder content if the database read is unavailable.
+The events, members, resources, team, and connect pages now try to load from Supabase first and fall back to local placeholder content if the database read is unavailable. Shared brand/page copy can also be driven from `site_settings`.
 
-To add the new tables and public read policies, run the contents of `supabase-schema.sql` in the Supabase SQL Editor.
+To add the current tables and public read policies, run the contents of `supabase-schema.sql` in the Supabase SQL Editor.
+
+## Admin dashboard
+
+- `admin.html`: login-backed dashboard for managing content tables
+- `admin.js`: Supabase Auth login flow and CRUD editor UI
+
+To use the admin dashboard:
+
+1. Run the latest `supabase-schema.sql` in Supabase SQL Editor.
+2. In Supabase Auth, create email/password users for each admin.
+3. Insert those admin emails into `public.admin_users`.
+4. Open `admin.html` and sign in with one of those accounts.
 
 If you only need the `events` read policy separately, use:
 
