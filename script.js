@@ -168,29 +168,34 @@ async function loadResources() {
       description: "Add the tutoring room or department office once confirmed.",
     },
     {
+      category: "On-Campus Support",
+      title: "Sign-up for tutoring here:",
+      description: '<a class = "resource-links" href = "https://www.joinknack.com/student/fordham-university" > fordham.joinknack.com </a>', 
+    },
+    {
       category: "On-Campus Support:",
-      title: "Peer help / office hours",
+      title: "Peer help / office hours:",
       description: "Use this for office hours, peer support sessions, or study groups.",
     },
     {
       category: "On-Campus Support:",
-      title: "Faculty and department support",
-      description: "List helpful faculty contacts or department resources here.",
+      title: "Faculty and department support:",
+      description: '<a class = "resource-links" href = "https://www.fordham.edu/academics/faculty/"> Fordham Faculty Page </a>',
     },
     {
       category: "Online Learning Resources:",
       title: "Programming practice:",
-      description: ['<a href = "https://leetcode.com/"> Leetcode </a>', '<a href = "https://www.hackerrank.com/"> HackerRank </a>', '<a href = "https://www.codewars.com/"> Codewars </a>']
+      description: ['<a class = "resource-links" href = "https://leetcode.com/"> Leetcode </a>', '<a class = "resource-links" href = "https://www.hackerrank.com/"> HackerRank </a>', '<a class = "resource-links" href = "https://www.codewars.com/"> Codewars </a>']
     },
     {
       category: "Online Learning Resources:",
       title: "Course support references:",
-      description: ['<a href = "https://www.geeksforgeeks.org/"> GeeksForGeeks </a>']
+      description: ['<a class = "resource-links" href = "https://www.geeksforgeeks.org/"> GeeksForGeeks </a>']
     },
     {
       category: "Online Learning Resources:",
       title: "Internship and career prep links:",
-      description: ['<a href = "https://interviewing.io/"> Interviewing.io </a>', '<a href = "https://www.greatfrontend.com/"> Greatfrontend </a>', '<a href = "https://www.dobr.ai/"> Dobr.AI </a>'],
+      description: ['<a class = "resource-links" href = "https://interviewing.io/"> Interviewing.io </a>', '<a class = "resource-links" href = "https://www.greatfrontend.com/"> Greatfrontend </a>', '<a class = "resource-links" href = "https://www.dobr.ai/"> Dobr.AI </a>'],
     },
   ];
 
