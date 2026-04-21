@@ -179,7 +179,7 @@ with check (public.is_admin());
 
 insert into public.members (initials, name, description, page_url, display_order)
 values
-  ('FS', 'First Member Starter', 'A starter profile showing how one member card can open a quick preview and then lead into a fuller page.', 'members/first-member.html', 1)
+  ('BR', 'Barsat Rithi', 'A starter personal website page that opens from the members hub and can grow into a fuller profile over time.', 'members/barsat-rithi.html', 1)
 on conflict (page_url) do nothing;
 
 insert into public.resources (category, title, description, url, display_order)

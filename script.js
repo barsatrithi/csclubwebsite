@@ -131,10 +131,10 @@ async function loadMembers() {
 
   const fallbackMembers = [
     {
-      initials: "FS",
-      name: "First Member Starter",
-      description: "A starter profile showing how one member card can open a quick preview and then lead into a fuller page.",
-      page_url: "members/first-member.html",
+      initials: "BR",
+      name: "Barsat Rithi",
+      description: "A starter personal website page that opens from the members hub and can grow into a fuller profile over time.",
+      page_url: "members/barsat-rithi.html",
     },
   ];
 

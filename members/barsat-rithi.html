@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barsat Rithi | Fordham CS Club</title>
+  <meta
+    name="description"
+    content="Personal member page for Barsat Rithi in the Fordham CS Club member gallery."
+  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body data-page="members">
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="Fordham Computer Science Club home">
+        <img src="../assets/club-logo.jpeg" alt="Fordham Computer Science Club logo">
+        <span>
+          <strong>Fordham CS Club</strong>
+          <small>Lincoln Center</small>
+        </span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="../index.html" data-page-link="home">Home</a>
+        <a href="../team.html" data-page-link="team">Meet the Team</a>
+        <a href="../connect.html" data-page-link="connect">Connect</a>
+        <a href="../resources.html" data-page-link="resources">Resources</a>
+        <a href="../events.html" data-page-link="events">Events</a>
+        <a href="../members.html" data-page-link="members">Members</a>
+      </nav>
+    </header>
+
+    <main class="page-main">
+      <section class="section page-hero reveal is-visible member-profile-hero">
+        <div class="profile-avatar member-profile-badge">BR</div>
+        <div>
+          <p class="eyebrow">Personal Website Placeholder</p>
+          <h1>Barsat Rithi</h1>
+          <p class="member-profile-lead">
+            This is the static starter page for Barsat Rithi. Right now it is intentionally simple so the member-card flow
+            can be tested, and later it can grow into a full personal website with projects, bio, links, and anything else you want to showcase.
+          </p>
+          <div class="member-profile-actions">
+            <a class="button button-primary" href="../members.html">Back to Members</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section member-profile-grid">
+        <article class="member-profile-panel reveal is-visible">
+          <p class="member-profile-meta">Current State</p>
+          <h3>Static page scaffold</h3>
+          <p>
+            This page is live as a normal HTML file inside the repository. The member card on the members hub opens a popup first,
+            and that popup sends visitors here.
+          </p>
+        </article>
+
+        <article class="member-profile-panel reveal is-visible">
+          <p class="member-profile-meta">Future Content</p>
+          <h3>Easy places to expand later</h3>
+          <ul class="member-profile-list">
+            <li>Intro and short bio</li>
+            <li>Projects or research work</li>
+            <li>Resume and portfolio links</li>
+            <li>GitHub, LinkedIn, and contact info</li>
+            <li>Photos, screenshots, or design work</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase-config.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
