@@ -179,9 +179,7 @@ with check (public.is_admin());
 
 insert into public.members (initials, name, description, page_url, display_order)
 values
-  ('BR', 'Example Member Page', 'A starter personal page placeholder that can become your example profile once you send your details.', 'members/example-member.html', 1),
-  ('?', 'How to Build Your Page', 'A future article-style tutorial placeholder for students to follow step by step.', 'members/how-to-build-your-page.html', 2),
-  ('TP', 'Member Template', 'A starter file members can eventually copy when the profile-page project officially launches.', 'members/member-template.html', 3)
+  ('FS', 'First Member Starter', 'A starter profile showing how one member card can open a quick preview and then lead into a fuller page.', 'members/first-member.html', 1)
 on conflict (page_url) do nothing;
 
 insert into public.resources (category, title, description, url, display_order)
@@ -220,7 +218,7 @@ values
   ('events_heading', 'Designed now for dynamic updates later.'),
   ('events_intro', 'The event cards below still read from a shared data source, but they now live on a dedicated page that will be much easier to connect to a future backend.'),
   ('members_heading', 'A member hub that can grow into a student-built gallery of personal pages.'),
-  ('members_intro', 'This page gives the member area its own home, while still leaving room to expand into a fuller gallery of student pages later on.'),
+  ('members_intro', 'This page gives the member area its own home, while still leaving room to expand into a fuller gallery of student pages later on. Click a card to preview a member and jump to their profile.'),
   ('resources_heading', 'A home for campus help, tutoring details, and favorite learning links.'),
   ('resources_intro', 'Keeping resources on their own page makes the site easier to navigate now and easier to expand later when you add real tutoring info and curated links.'),
   ('team_heading', 'Meet the people building the club.'),

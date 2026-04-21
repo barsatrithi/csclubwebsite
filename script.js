@@ -42,6 +42,16 @@ document.querySelectorAll(".reveal").forEach((element) => {
   revealObserver.observe(element);
 });
 
+const memberModal = document.getElementById("member-detail-modal");
+const memberModalName = document.getElementById("member-modal-name");
+const memberModalInitials = document.getElementById("member-modal-initials");
+const memberModalDescription = document.getElementById("member-modal-description");
+const memberModalKicker = document.getElementById("member-modal-kicker");
+const memberModalNote = document.getElementById("member-modal-note");
+const memberModalPrimaryAction = document.getElementById("member-modal-primary-action");
+let memberDirectory = [];
+let lastMemberTrigger = null;
+
 const heroSection = document.querySelector(".hero");
 
 function updateHeroScrollEffect() {
@@ -121,22 +131,10 @@ async function loadMembers() {
 
   const fallbackMembers = [
     {
-      initials: "BR",
-      name: "Example Member Page",
-      description: "A starter personal page placeholder that can become your example profile once you send your details.",
-      page_url: "members/example-member.html",
-    },
-    {
-      initials: "?",
-      name: "How to Build Your Page",
-      description: "A future article-style tutorial placeholder for students to follow step by step.",
-      page_url: "members/how-to-build-your-page.html",
-    },
-    {
-      initials: "TP",
-      name: "Member Template",
-      description: "A starter file members can eventually copy when the profile-page project officially launches.",
-      page_url: "members/member-template.html",
+      initials: "FS",
+      name: "First Member Starter",
+      description: "A starter profile showing how one member card can open a quick preview and then lead into a fuller page.",
+      page_url: "members/first-member.html",
     },
   ];
 
@@ -338,19 +336,111 @@ function renderTeamMembers(teamMembers, container) {
 }
 
 function renderMembers(members, container) {
-  container.innerHTML = members
+  memberDirectory = members.map((member) => normalizeMember(member));
+
+  container.innerHTML = memberDirectory
     .map(
       (member, index) => `
-        <a class="member-link-card reveal is-visible" href="${member.page_url}">
+        <a class="member-link-card reveal is-visible" href="${member.page_url}" data-open-member data-member-index="${index}">
           <div class="member-icon${index % 2 ? " member-icon-alt" : ""}">${member.initials}</div>
           <div>
             <h3>${member.name}</h3>
             <p>${member.description}</p>
+            <span class="member-card-link-label">${member.isExternal ? "Preview personal site" : "Preview member page"}</span>
           </div>
         </a>
       `
     )
     .join("");
+
+  container.querySelectorAll("[data-open-member]").forEach((memberLink) => {
+    memberLink.addEventListener("click", handleMemberCardClick);
+  });
+}
+
+function normalizeMember(member) {
+  const pageUrl = String(member.page_url || "").trim();
+  const isExternal = /^https?:\/\//i.test(pageUrl);
+
+  return {
+    initials: String(member.initials || "?").trim().slice(0, 3) || "?",
+    name: String(member.name || "Member").trim() || "Member",
+    description: String(member.description || "Profile details coming soon.").trim() || "Profile details coming soon.",
+    page_url: pageUrl || "members.html",
+    isExternal,
+  };
+}
+
+function handleMemberCardClick(event) {
+  if (!memberModal || event.defaultPrevented) {
+    return;
+  }
+
+  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+    return;
+  }
+
+  const memberIndex = Number(event.currentTarget.dataset.memberIndex);
+  const member = memberDirectory[memberIndex];
+
+  if (!member) {
+    return;
+  }
+
+  event.preventDefault();
+  openMemberModal(member, event.currentTarget);
+}
+
+function openMemberModal(member, trigger) {
+  if (!memberModal) {
+    return;
+  }
+
+  lastMemberTrigger = trigger || null;
+  memberModalInitials.textContent = member.initials;
+  memberModalName.textContent = member.name;
+  memberModalDescription.textContent = member.description;
+  memberModalKicker.textContent = member.isExternal ? "External personal site" : "Club-hosted member page";
+  memberModalNote.textContent = member.isExternal
+    ? "This card links out to a member's own website, portfolio, or profile outside the club repository."
+    : "This member page lives inside the club site, so the student can branch off and keep expanding it here.";
+  memberModalPrimaryAction.textContent = member.isExternal ? "Visit Personal Site" : "Open Member Page";
+  memberModalPrimaryAction.href = member.page_url;
+  memberModalPrimaryAction.target = member.isExternal ? "_blank" : "_self";
+
+  if (member.isExternal) {
+    memberModalPrimaryAction.rel = "noreferrer";
+  } else {
+    memberModalPrimaryAction.removeAttribute("rel");
+  }
+
+  memberModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeMemberModal() {
+  if (!memberModal || memberModal.hidden) {
+    return;
+  }
+
+  memberModal.hidden = true;
+  document.body.classList.remove("modal-open");
+
+  if (lastMemberTrigger) {
+    lastMemberTrigger.focus();
+  }
+}
+
+if (memberModal) {
+  memberModal.querySelectorAll("[data-member-close]").forEach((closeButton) => {
+    closeButton.addEventListener("click", closeMemberModal);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMemberModal();
+    }
+  });
 }
 
 function renderSiteLinks(siteLinks, container) {
