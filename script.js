@@ -317,18 +317,58 @@ function renderEvents(events, container) {
     .map(
       (event) => `
         <article class="event-card">
+          ${event.flyer_url ? `<img class="event-flyer" src="${event.flyer_url}" alt="${event.title} flyer">` : ""}
           <span class="event-tag">${event.tag}</span>
           <h3>${event.title}</h3>
           <div class="event-meta">
-            <span>${event.date}</span>
+            <span>${formatEventDateRange(event.starts_at || event.date, event.ends_at)}</span>
             <span>${event.location}</span>
           </div>
           <p>${event.description}</p>
-          <span class="event-cta">Future admin-ready event slot</span>
+          ${event.registration_url ? `<a class="event-cta" href="${event.registration_url}" target="_blank" rel="noreferrer">Register / Learn More</a>` : `<span class="event-cta">More details coming soon</span>`}
         </article>
       `
     )
     .join("");
+}
+
+function formatEventDateRange(startsAt, endsAt) {
+  if (!startsAt) {
+    return "Date to be announced";
+  }
+
+  const startDate = new Date(startsAt);
+
+  if (Number.isNaN(startDate.getTime())) {
+    return startsAt;
+  }
+
+  const dateLabel = startDate.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  const startTimeLabel = startDate.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  if (!endsAt) {
+    return `${dateLabel} • ${startTimeLabel}`;
+  }
+
+  const endDate = new Date(endsAt);
+
+  if (Number.isNaN(endDate.getTime())) {
+    return `${dateLabel} • ${startTimeLabel}`;
+  }
+
+  const endTimeLabel = endDate.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  return `${dateLabel} • ${startTimeLabel} - ${endTimeLabel}`;
 }
 
 function renderTeamMembers(teamMembers, container) {
@@ -450,10 +490,28 @@ async function loadTableFromSupabase(tableName, columns, orderBy) {
 }
 
 async function loadEventsFromSupabase() {
-  return loadTableFromSupabase("events", "tag, title, date, location, description", {
-    column: "id",
-    ascending: true,
-  });
+  const client = createSupabaseClient();
+
+  if (!client) {
+    return null;
+  }
+
+  try {
+    const { data, error } = await client
+      .from("events")
+      .select("id, tag, title, description, location, starts_at, ends_at, flyer_url, registration_url, is_published")
+      .eq("is_published", true)
+      .order("starts_at", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.warn("Supabase events load failed, falling back to local content.", error);
+    return null;
+  }
 }
 
 loadEvents();

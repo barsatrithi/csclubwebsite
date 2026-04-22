@@ -407,6 +407,15 @@ h2 {
   overflow: hidden;
 }
 
+.event-flyer {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 18px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .profile-card::before,
 .connect-card::before,
 .event-card::before {
@@ -462,6 +471,51 @@ h2 {
 .connect-card-link {
   display: inline-flex;
   margin-top: 10px;
+  color: var(--accent);
+  font-family: "Chakra Petch", sans-serif;
+}
+
+.admin-events-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 24px;
+}
+
+.admin-event-form,
+.admin-event-list {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-event-form {
+  padding: 28px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+
+.admin-event-card {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-event-card h3,
+.admin-event-card p {
+  margin: 0;
+}
+
+.admin-event-card-copy {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-event-card-status {
   color: var(--accent);
   font-family: "Chakra Petch", sans-serif;
 }
@@ -680,7 +734,8 @@ h2 {
   .events-grid,
   .page-links-grid,
   .admin-auth-panel,
-  .admin-record-grid {
+  .admin-record-grid,
+  .admin-events-layout {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -730,7 +785,8 @@ h2 {
   .hero-stats,
   .page-links-grid,
   .admin-auth-panel,
-  .admin-record-grid {
+  .admin-record-grid,
+  .admin-events-layout {
     grid-template-columns: 1fr;
   }
 

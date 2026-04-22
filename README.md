@@ -17,6 +17,8 @@ Starter website for the Computer Science Club at Fordham University Lincoln Cent
 - `script.js`: sticky mobile navigation, active page highlighting, reveal animations, and event loading
 - `supabase-config.js`: Supabase project URL and public anon key for browser reads
 - `supabase-schema.sql`: starter SQL for `events`, `members`, `resources`, `team_members`, `site_links`, and `site_settings`
+- `supabase-events-schema.sql`: clean events-first Supabase schema with admin access and flyer upload policies
+- `SUPABASE_EVENTS_SETUP.md`: chronological setup guide for the events backend
 - `data/events.json`: starter event data source
 - `members/example-member.html`: example personal member page
 - `members/how-to-build-your-page.html`: placeholder tutorial page
@@ -46,6 +48,11 @@ That means the current events UI does not need to be redesigned when you add dyn
 The events, members, resources, team, and connect pages now try to load from Supabase first and fall back to local placeholder content if the database read is unavailable. Shared brand/page copy can also be driven from `site_settings`.
 
 To add the current tables and public read policies, run the contents of `supabase-schema.sql` in the Supabase SQL Editor.
+
+If you are restarting with an events-first setup, use:
+
+- [supabase-events-schema.sql](/Users/barsatrithi/Desktop/Computer%20Science%20Club%20Website/supabase-events-schema.sql)
+- [SUPABASE_EVENTS_SETUP.md](/Users/barsatrithi/Desktop/Computer%20Science%20Club%20Website/SUPABASE_EVENTS_SETUP.md)
 
 ## Admin dashboard
 

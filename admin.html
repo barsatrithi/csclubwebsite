@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin | Fordham CS Club</title>
+  <title>Events Admin | Fordham CS Club</title>
   <meta
     name="description"
-    content="Admin dashboard for managing the Fordham CS Club website content."
+    content="Admin dashboard for managing Fordham CS Club events."
   >
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,10 +44,10 @@
 
     <main class="page-main">
       <section class="section page-hero reveal is-visible">
-        <p class="eyebrow">Admin Dashboard</p>
-        <h1>Manage club content from one place.</h1>
+        <p class="eyebrow">Events Admin</p>
+        <h1>Manage published events and flyer uploads.</h1>
         <p class="page-intro">
-          Sign in with an approved admin account to edit events, resources, members, team details, links, and shared site settings.
+          Sign in with an approved admin account to add, edit, publish, and remove events. Flyer images are uploaded to Supabase Storage.
         </p>
       </section>
 
@@ -55,7 +55,7 @@
         <div class="admin-auth-panel">
           <div class="admin-auth-copy">
             <h2>Admin Login</h2>
-            <p>Use an email and password account created in Supabase Auth, and make sure that email is listed in the `admin_users` table.</p>
+            <p>Use an email and password account created in Supabase Auth, and make sure the same email is listed in the <code>admin_users</code> table.</p>
           </div>
 
           <form class="admin-auth-form" id="admin-login-form">
@@ -69,6 +69,7 @@
             </label>
             <div class="admin-auth-actions">
               <button class="button button-primary" type="submit">Sign In</button>
+              <button class="button button-secondary" type="button" id="admin-recovery-button">Password Reset</button>
               <button class="button button-secondary" type="button" id="admin-logout-button" hidden>Log Out</button>
             </div>
             <p class="admin-status" id="admin-status" aria-live="polite"></p>
@@ -78,11 +79,79 @@
 
       <section class="section" id="admin-dashboard" hidden>
         <div class="section-heading reveal is-visible">
-          <p class="eyebrow">Content Manager</p>
-          <h2>Update the site without touching raw HTML.</h2>
-          <p>Edit existing records, add new ones, or remove content that no longer belongs on the site.</p>
+          <p class="eyebrow">Event Manager</p>
+          <h2>Create and publish events.</h2>
+          <p>Use the form to add new events, upload a flyer, and decide whether the event should be visible on the public events page.</p>
         </div>
-        <div class="admin-sections" id="admin-sections"></div>
+        <div class="admin-events-layout">
+          <form class="admin-event-form" id="admin-event-form">
+            <input type="hidden" name="id">
+            <input type="hidden" name="existing_flyer_path">
+            <input type="hidden" name="existing_flyer_url">
+
+            <label class="admin-field">
+              <span>Title</span>
+              <input type="text" name="title" required>
+            </label>
+
+            <label class="admin-field">
+              <span>Tag</span>
+              <input type="text" name="tag" placeholder="Workshop, Career, Social" required>
+            </label>
+
+            <label class="admin-field">
+              <span>Description</span>
+              <textarea name="description" required></textarea>
+            </label>
+
+            <label class="admin-field">
+              <span>Location</span>
+              <input type="text" name="location" required>
+            </label>
+
+            <label class="admin-field">
+              <span>Starts At</span>
+              <input type="datetime-local" name="starts_at" required>
+            </label>
+
+            <label class="admin-field">
+              <span>Ends At</span>
+              <input type="datetime-local" name="ends_at">
+            </label>
+
+            <label class="admin-field">
+              <span>Registration URL</span>
+              <input type="url" name="registration_url" placeholder="https://...">
+            </label>
+
+            <label class="admin-field">
+              <span>Flyer Image</span>
+              <input type="file" name="flyer" accept="image/png,image/jpeg,image/webp">
+            </label>
+
+            <label class="admin-field admin-checkbox-field">
+              <input type="checkbox" name="is_published">
+              <span>Published</span>
+            </label>
+
+            <div class="admin-auth-actions">
+              <button class="button button-primary" type="submit">Save Event</button>
+              <button class="button button-secondary" type="button" id="admin-event-reset-button">Clear Form</button>
+            </div>
+            <p class="admin-status" id="admin-event-status" aria-live="polite"></p>
+          </form>
+
+          <section class="admin-section">
+            <div class="admin-section-heading">
+              <div>
+                <h3>Current Events</h3>
+                <p>Draft and published events from Supabase.</p>
+              </div>
+              <button class="button button-secondary" type="button" id="admin-event-refresh-button">Refresh</button>
+            </div>
+            <div class="admin-event-list" id="admin-event-list"></div>
+          </section>
+        </div>
       </section>
     </main>
   </div>
