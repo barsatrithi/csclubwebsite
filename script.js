@@ -129,24 +129,30 @@ async function loadMembers() {
     return;
   }
 
-  const fallbackMembers = [
-    {
-      initials: "BR",
-      name: "Barsat Rithi",
-      description: "A starter personal website page that opens from the members hub and can grow into a fuller profile over time.",
-      page_url: "members/barsat-rithi.html",
-    },
-  ];
+  const fallbackMembers = [];
 
   const supabaseMembers = await loadTableFromSupabase("members", "initials, name, description, page_url", {
     column: "display_order",
     ascending: true,
   });
 
-  renderMembers(
-    Array.isArray(supabaseMembers) && supabaseMembers.length ? supabaseMembers : fallbackMembers,
-    membersList
-  );
+  if (Array.isArray(supabaseMembers) && supabaseMembers.length) {
+    renderMembers(supabaseMembers, membersList);
+    return;
+  }
+
+  try {
+    const response = await fetch("data/members.json");
+
+    if (!response.ok) {
+      throw new Error("Unable to load members");
+    }
+
+    const members = await response.json();
+    renderMembers(Array.isArray(members) && members.length ? members : fallbackMembers, membersList);
+  } catch (error) {
+    renderMembers(fallbackMembers, membersList);
+  }
 }
 
 async function loadResources() {
@@ -337,6 +343,19 @@ function renderTeamMembers(teamMembers, container) {
 
 function renderMembers(members, container) {
   memberDirectory = members.map((member) => normalizeMember(member));
+
+  if (!memberDirectory.length) {
+    container.innerHTML = `
+      <article class="member-link-card reveal is-visible">
+        <div class="member-icon">--</div>
+        <div>
+          <h3>Member pages coming soon</h3>
+          <p>Add entries to <code>data/members.json</code> to populate this directory without editing the page layout.</p>
+        </div>
+      </article>
+    `;
+    return;
+  }
 
   container.innerHTML = memberDirectory
     .map(
