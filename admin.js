@@ -59,7 +59,7 @@ async function handleAdminLogin(event) {
 
   setAdminStatus("Signing in...");
 
-  const { error } = await adminClient.auth.signInWithPassword({ email, password });
+  const { data, error } = await adminClient.auth.signInWithPassword({ email, password });
 
   if (error) {
     setAdminStatus(error.message, true);
@@ -68,6 +68,20 @@ async function handleAdminLogin(event) {
 
   adminLoginForm.reset();
   setAdminStatus("Signed in. Checking admin approval...");
+
+  if (data?.session) {
+    await updateAdminSessionState(data.session);
+    return;
+  }
+
+  const sessionResponse = await adminClient.auth.getSession();
+
+  if (sessionResponse.error) {
+    setAdminStatus(`Signed in, but session could not be loaded: ${sessionResponse.error.message}`, true);
+    return;
+  }
+
+  await updateAdminSessionState(sessionResponse.data.session);
 }
 
 async function handlePasswordRecovery() {
