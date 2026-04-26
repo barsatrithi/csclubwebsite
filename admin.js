@@ -114,9 +114,11 @@ async function updateAdminSessionState(session) {
     adminDashboard.hidden = true;
     adminLogoutButton.hidden = true;
     adminEventList.innerHTML = "";
+    setEventStatus("");
     return;
   }
 
+  setAdminStatus("Signed in. Verifying admin access...");
   const adminRecord = await fetchApprovedAdmin(session.user);
 
   if (!adminRecord) {
@@ -131,6 +133,7 @@ async function updateAdminSessionState(session) {
   approvedAdmin = adminRecord;
   adminDashboard.hidden = false;
   adminLogoutButton.hidden = false;
+  await syncAdminUserId(session.user, adminRecord);
   setAdminStatus(`Signed in as ${adminRecord.name || session.user.email}`);
   await loadAdminEvents();
 }
@@ -142,10 +145,25 @@ async function fetchApprovedAdmin(user) {
     return null;
   }
 
+  const byUserId = await adminClient
+    .from("admin_users")
+    .select("email, name, role, user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (byUserId.error) {
+    setAdminStatus(`Could not verify admin access: ${byUserId.error.message}`, true);
+    return null;
+  }
+
+  if (byUserId.data) {
+    return byUserId.data;
+  }
+
   const { data, error } = await adminClient
     .from("admin_users")
     .select("email, name, role, user_id")
-    .ilike("email", email)
+    .eq("email", email)
     .maybeSingle();
 
   if (error) {
@@ -156,17 +174,35 @@ async function fetchApprovedAdmin(user) {
   return data || null;
 }
 
+async function syncAdminUserId(user, adminRecord) {
+  if (!user?.id || !adminRecord?.email || adminRecord.user_id === user.id) {
+    return;
+  }
+
+  const { error } = await adminClient
+    .from("admin_users")
+    .update({ user_id: user.id })
+    .eq("email", adminRecord.email);
+
+  if (error) {
+    setAdminStatus(`Signed in, but could not sync admin profile: ${error.message}`, true);
+  }
+}
+
 async function loadAdminEvents() {
+  setEventStatus("Loading events...");
   const { data, error } = await adminClient
     .from("events")
     .select("id, title, tag, description, location, starts_at, ends_at, flyer_path, flyer_url, registration_url, is_published, created_at, updated_at")
     .order("starts_at", { ascending: true });
 
   if (error) {
+    setAdminStatus(`Admin access is valid, but events could not load: ${error.message}`, true);
     setEventStatus(error.message, true);
     return;
   }
 
+  setEventStatus("");
   renderAdminEvents(data || []);
 }
 
@@ -290,10 +326,12 @@ async function handleEventSave(event) {
     .upsert(payload, { onConflict: "id" });
 
   if (error) {
+    setAdminStatus(`Event save failed: ${error.message}`, true);
     setEventStatus(error.message, true);
     return;
   }
 
+  setAdminStatus("Event saved successfully.");
   setEventStatus("Event saved.");
   resetEventForm();
   await loadAdminEvents();
@@ -317,6 +355,7 @@ async function uploadEventFlyer(file, titleValue) {
     });
 
   if (uploadError) {
+    setAdminStatus(`Flyer upload failed: ${uploadError.message}`, true);
     setEventStatus(uploadError.message, true);
     return null;
   }
@@ -338,6 +377,7 @@ async function deleteEventRecord(idValue, flyerPath) {
     .eq("id", Number(idValue));
 
   if (error) {
+    setAdminStatus(`Delete failed: ${error.message}`, true);
     setEventStatus(error.message, true);
     return;
   }
