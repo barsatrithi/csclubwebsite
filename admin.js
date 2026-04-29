@@ -11,6 +11,7 @@ const adminEventList = document.getElementById("admin-event-list");
 
 const adminClient = createAdminClient();
 let approvedAdmin = null;
+let authRequestCounter = 0;
 
 if (adminClient && adminLoginForm && adminDashboard && adminEventForm && adminEventList) {
   setAdminStatus("Sign in with an approved admin email.");
@@ -21,7 +22,14 @@ if (adminClient && adminLoginForm && adminDashboard && adminEventForm && adminEv
   adminEventResetButton?.addEventListener("click", resetEventForm);
   adminEventRefreshButton?.addEventListener("click", loadAdminEvents);
 
-  adminClient.auth.onAuthStateChange(async (_event, session) => {
+  adminClient.auth.onAuthStateChange(async (authEvent, session) => {
+    // TOKEN_REFRESHED fires often (Supabase refreshes tokens silently).
+    // If an admin is already verified, skip re-running the full approval check.
+    // Without this guard a TOKEN_REFRESHED mid-login increments authRequestCounter
+    // and causes the in-flight SIGNED_IN handler to bail early, freezing the UI.
+    if (authEvent === "TOKEN_REFRESHED" && approvedAdmin) {
+      return;
+    }
     await updateAdminSessionState(session);
   });
 
@@ -59,29 +67,20 @@ async function handleAdminLogin(event) {
 
   setAdminStatus("Signing in...");
 
-  const { data, error } = await adminClient.auth.signInWithPassword({ email, password });
+  const { error } = await adminClient.auth.signInWithPassword({ email, password });
 
   if (error) {
     setAdminStatus(error.message, true);
     return;
   }
 
+  // Do NOT call updateAdminSessionState here.
+  // onAuthStateChange will fire and handle the session transition.
+  // Calling it here too creates a race: both calls increment authRequestCounter,
+  // and a mid-flight TOKEN_REFRESHED event can cause all instances to bail out
+  // early, leaving the UI frozen at "Looking up your admin approval..."
   adminLoginForm.reset();
-  setAdminStatus("Signed in. Checking admin approval...");
-
-  if (data?.session) {
-    await updateAdminSessionState(data.session);
-    return;
-  }
-
-  const sessionResponse = await adminClient.auth.getSession();
-
-  if (sessionResponse.error) {
-    setAdminStatus(`Signed in, but session could not be loaded: ${sessionResponse.error.message}`, true);
-    return;
-  }
-
-  await updateAdminSessionState(sessionResponse.data.session);
+  setAdminStatus("Signed in. Verifying admin approval…");
 }
 
 async function handlePasswordRecovery() {
@@ -122,7 +121,7 @@ async function handleAdminLogout() {
   setAdminStatus("Signed out.");
 }
 
-async function updateAdminSessionState(session) {
+async function updateAdminSessionState(session, requestId = ++authRequestCounter) {
   if (!session?.user) {
     approvedAdmin = null;
     adminDashboard.hidden = true;
@@ -132,8 +131,12 @@ async function updateAdminSessionState(session) {
     return;
   }
 
-  setAdminStatus("Signed in. Verifying admin access...");
+  setAdminStatus("Signed in. Looking up your admin approval...");
   const adminRecord = await fetchApprovedAdmin(session.user);
+
+  if (requestId !== authRequestCounter) {
+    return;
+  }
 
   if (!adminRecord) {
     approvedAdmin = null;
@@ -147,7 +150,11 @@ async function updateAdminSessionState(session) {
   approvedAdmin = adminRecord;
   adminDashboard.hidden = false;
   adminLogoutButton.hidden = false;
+  setAdminStatus("Admin account verified. Syncing dashboard access...");
   await syncAdminUserId(session.user, adminRecord);
+  if (requestId !== authRequestCounter) {
+    return;
+  }
   setAdminStatus(`Signed in as ${adminRecord.name || session.user.email}`);
   await loadAdminEvents();
 }
@@ -177,15 +184,15 @@ async function fetchApprovedAdmin(user) {
   const { data, error } = await adminClient
     .from("admin_users")
     .select("email, name, role, user_id")
-    .eq("email", email)
-    .maybeSingle();
+    .ilike("email", email)
+    .limit(1);
 
   if (error) {
     setAdminStatus(`Could not verify admin access: ${error.message}`, true);
     return null;
   }
 
-  return data || null;
+  return Array.isArray(data) && data.length ? data[0] : null;
 }
 
 async function syncAdminUserId(user, adminRecord) {
