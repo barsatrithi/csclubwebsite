@@ -121,6 +121,12 @@ async function loadMembers() {
 
   const fallbackMembers = [
     {
+      initials: "KB",
+      name: "Katherine :)",
+      description: "Hi y'all! Check out my website to find out a lil more abt me!",
+      page_url: "members/Katherine/PWKB.html",
+    },
+    {
       initials: "BR",
       name: "Example Member Page",
       description: "A starter personal page placeholder that can become your example profile once you send your details.",
