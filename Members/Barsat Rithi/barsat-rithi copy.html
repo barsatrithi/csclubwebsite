@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barsat Rithi | Fordham CS Club</title>
+  <meta
+    name="description"
+    content="Barsat Rithi's member page featuring experience, projects, and links."
+  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,500;6..72,700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    :root {
+      --paper: #f6efe4;
+      --paper-strong: #fffaf2;
+      --paper-soft: #f0e5d5;
+      --ink: #17130f;
+      --muted: #62584d;
+      --line: #decdb8;
+      --accent: #f26b1d;
+      --accent-soft: #fff0e4;
+      --shadow-soft: 0 24px 60px rgba(109, 86, 52, 0.12);
+    }
+
+    body.barsat-page {
+      background:
+        radial-gradient(circle at top left, rgba(242, 107, 29, 0.08), transparent 24%),
+        radial-gradient(circle at top right, rgba(177, 151, 112, 0.12), transparent 28%),
+        linear-gradient(180deg, #f8f1e6 0%, #f5ede1 50%, #f1e6d8 100%);
+      color: var(--ink);
+      font-family: "Manrope", sans-serif;
+    }
+
+    body.barsat-page::before {
+      display: none;
+    }
+
+    .barsat-page .site-shell {
+      width: min(1160px, calc(100% - 32px));
+      padding-bottom: 88px;
+    }
+
+    .barsat-page .topbar {
+      background: rgba(255, 250, 242, 0.86);
+      border-color: rgba(123, 96, 64, 0.12);
+      box-shadow: 0 12px 30px rgba(122, 99, 69, 0.08);
+      backdrop-filter: blur(12px);
+    }
+
+    .barsat-page .brand img {
+      box-shadow: none;
+    }
+
+    .barsat-page .brand strong,
+    .barsat-page .nav-links a,
+    .barsat-page .eyebrow,
+    .barsat-page h2,
+    .barsat-page h3,
+    .barsat-page .button,
+    .barsat-page .barsat-kicker,
+    .barsat-page .section-label {
+      font-family: "Chakra Petch", sans-serif;
+    }
+
+    .barsat-page .brand small,
+    .barsat-page .nav-links a {
+      color: var(--muted);
+    }
+
+    .barsat-page .nav-links a[aria-current="page"],
+    .barsat-page .nav-links a:hover,
+    .barsat-page .nav-links a:focus-visible {
+      color: var(--ink);
+    }
+
+    .barsat-page .menu-toggle {
+      border-color: rgba(123, 96, 64, 0.12);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .barsat-page .menu-toggle span {
+      background: var(--ink);
+    }
+
+    .barsat-main {
+      padding-top: 10px;
+    }
+
+    .barsat-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 28px;
+      align-items: center;
+      padding: 40px 0 28px;
+    }
+
+    .barsat-hero-copy,
+    .barsat-portrait-card,
+    .barsat-section,
+    .barsat-highlight {
+      background: rgba(255, 250, 242, 0.82);
+      border: 1px solid rgba(123, 96, 64, 0.12);
+      border-radius: 30px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .barsat-hero-copy {
+      padding: 34px;
+    }
+
+    .barsat-kicker,
+    .section-label {
+      display: inline-flex;
+      width: fit-content;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+    }
+
+    .barsat-name {
+      margin: 20px 0 16px;
+      font-family: "Newsreader", serif;
+      font-size: clamp(3.3rem, 8vw, 6rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+    }
+
+    .barsat-lead {
+      margin: 0;
+      max-width: 14ch;
+      font-family: "Newsreader", serif;
+      font-size: clamp(1.7rem, 3vw, 2.35rem);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    .barsat-subcopy {
+      max-width: 58ch;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 1.03rem;
+      line-height: 1.8;
+    }
+
+    .barsat-actions,
+    .barsat-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .barsat-page .button {
+      min-height: 48px;
+      border-radius: 999px;
+      padding: 0 18px;
+    }
+
+    .barsat-page .button-primary {
+      background: var(--accent);
+      color: #fffaf4;
+      box-shadow: none;
+    }
+
+    .barsat-page .button-secondary {
+      border-color: rgba(123, 96, 64, 0.18);
+      background: #fffaf2;
+      color: var(--ink);
+    }
+
+    .barsat-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .barsat-badge {
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(123, 96, 64, 0.12);
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .barsat-portrait-card {
+      padding: 18px;
+    }
+
+    .barsat-portrait-wrap {
+      overflow: hidden;
+      border-radius: 24px;
+      aspect-ratio: 4 / 5;
+      background: linear-gradient(180deg, #f7ede0 0%, #ead9c7 100%);
+    }
+
+    .barsat-portrait-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .barsat-portrait-note {
+      margin: 16px 6px 2px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    .barsat-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .barsat-highlight {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      padding: 18px;
+      margin-top: 6px;
+    }
+
+    .barsat-highlight-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(123, 96, 64, 0.08);
+    }
+
+    .barsat-highlight-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-family: "Newsreader", serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .barsat-highlight-card span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .barsat-section {
+      padding: 26px;
+    }
+
+    .barsat-section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .barsat-section-heading h2 {
+      margin: 0;
+      font-family: "Newsreader", serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .barsat-section-heading p {
+      max-width: 46ch;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .barsat-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .barsat-card {
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.64);
+      border: 1px solid rgba(123, 96, 64, 0.08);
+    }
+
+    .barsat-card-header {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .barsat-card h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.35;
+    }
+
+    .barsat-card-org {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .barsat-card-date {
+      white-space: nowrap;
+      color: var(--accent);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .barsat-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .barsat-list li + li {
+      margin-top: 8px;
+    }
+
+    .barsat-two-column {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+      gap: 18px;
+    }
+
+    .barsat-note {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .barsat-link-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .barsat-link-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.64);
+      border: 1px solid rgba(123, 96, 64, 0.08);
+    }
+
+    .barsat-link-row span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .barsat-link-row a {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .barsat-footer {
+      padding: 24px 0 8px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 980px) {
+      .barsat-hero,
+      .barsat-two-column,
+      .barsat-highlight,
+      .barsat-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .barsat-highlight {
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .barsat-page .site-shell {
+        width: min(100% - 20px, 1160px);
+      }
+
+      .barsat-hero-copy,
+      .barsat-section {
+        padding: 22px;
+      }
+
+      .barsat-name {
+        font-size: clamp(2.8rem, 16vw, 4.2rem);
+      }
+
+      .barsat-lead {
+        max-width: none;
+      }
+
+      .barsat-section-heading {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .barsat-card-header,
+      .barsat-link-row {
+        flex-direction: column;
+        align-items: start;
+      }
+
+      .barsat-card-date {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body class="barsat-page" data-page="members">
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="Fordham Computer Science Club home">
+        <img src="../assets/club-logo.jpeg" alt="Fordham Computer Science Club logo">
+        <span>
+          <strong>Fordham CS Club</strong>
+          <small>Lincoln Center</small>
+        </span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="../index.html" data-page-link="home">Home</a>
+        <a href="../team.html" data-page-link="team">Meet the Team</a>
+        <a href="../connect.html" data-page-link="connect">Connect</a>
+        <a href="../resources.html" data-page-link="resources">Resources</a>
+        <a href="../events.html" data-page-link="events">Events</a>
+        <a href="../members.html" data-page-link="members">Members</a>
+      </nav>
+    </header>
+
+    <main class="barsat-main">
+      <section class="barsat-hero reveal is-visible">
+        <div class="barsat-hero-copy">
+          <p class="barsat-kicker">Fordham CS Club President</p>
+          <h1 class="barsat-name">Barsat Rithi</h1>
+          <p class="barsat-lead">Hi! My name is Barsat Rithi. I am a rising senior at Fordham University, majoring in Computer Science!</p>
+          <p class="barsat-subcopy">
+            I am especially interested in product thinking, AI, machine learning, and building useful tools that connect technical work
+            with real user needs. My recent work has spanned product-facing internships, AI evaluation, teaching, data analysis, and student leadership.
+          </p>
+
+          <div class="barsat-actions">
+            <a class="button button-primary" href="../assets/barsat-rithi-resume-april-2026.pdf" target="_blank" rel="noreferrer">View Resume</a>
+            <a class="button button-secondary" href="https://github.com/barsatrithi" target="_blank" rel="noreferrer">GitHub</a>
+            <a class="button button-secondary" href="https://www.linkedin.com/in/barsat-rithi-a822b2253/" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a class="button button-secondary" href="../members.html">Back to Members</a>
+          </div>
+
+          <div class="barsat-badges" aria-label="Quick profile details">
+            <span class="barsat-badge">Fordham University</span>
+            <span class="barsat-badge">B.S. Computer Science</span>
+            <span class="barsat-badge">Minor in Cybersecurity</span>
+            <span class="barsat-badge">GPA 3.6</span>
+            <span class="barsat-badge">New York, NY</span>
+          </div>
+        </div>
+
+        <aside class="barsat-portrait-card reveal is-visible">
+          <div class="barsat-portrait-wrap">
+            <img src="../assets/barsat-rithi-headshot.png" alt="Portrait of Barsat Rithi">
+          </div>
+          <p class="barsat-portrait-note">
+            Building at the intersection of product, data, and AI while leading student community on campus.
+          </p>
+        </aside>
+      </section>
+
+      <section class="barsat-highlight reveal is-visible" aria-label="Quick highlights">
+        <article class="barsat-highlight-card">
+          <strong>Product + AI</strong>
+          <span>Experience across product support, LLM evaluation, automation workflows, and user-facing problem solving.</span>
+        </article>
+        <article class="barsat-highlight-card">
+          <strong>Hands-on Builder</strong>
+          <span>Projects in AI tutoring and applied machine learning, with a strong focus on iteration and usability.</span>
+        </article>
+        <article class="barsat-highlight-card">
+          <strong>Student Leader</strong>
+          <span>President of the Computer Science Club, leading workshops, events, and Fordham's first RamHack.</span>
+        </article>
+        <article class="barsat-highlight-card">
+          <strong>Teaching Mindset</strong>
+          <span>Experience guiding students through technical concepts as a teaching assistant for Computer Science I.</span>
+        </article>
+      </section>
+
+      <div class="barsat-grid">
+        <section class="barsat-section reveal is-visible" id="experience">
+          <div class="barsat-section-heading">
+            <div>
+              <p class="section-label">Experience</p>
+              <h2>Recent roles across product, AI, data, and education.</h2>
+            </div>
+            <p>
+              My work has centered on translating technical detail into better decisions, better products, and clearer user experiences.
+            </p>
+          </div>
+
+          <div class="barsat-card-grid">
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>Incoming Product Management Intern</h3>
+                  <p class="barsat-card-org">Zinnia · Greenwich, CT</p>
+                </div>
+                <span class="barsat-card-date">May 2026 - Jul 2026</span>
+              </div>
+              <p class="barsat-note">Incoming summer internship focused on product management.</p>
+            </article>
+
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>CIO Technical Assistant</h3>
+                  <p class="barsat-card-org">Fordham University Office of the CIO · New York, NY</p>
+                </div>
+                <span class="barsat-card-date">Feb 2026 - Present</span>
+              </div>
+              <ul class="barsat-list">
+                <li>Partner with cross-functional teams to translate application design requirements into user-facing interface work.</li>
+                <li>Support Product Specialists in RD feature requirement gathering, bridging technical and stakeholder perspectives.</li>
+                <li>Provide testing support across staging and production environments, surfacing bugs and usability issues before release.</li>
+              </ul>
+            </article>
+
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>AI Training Analyst</h3>
+                  <p class="barsat-card-org">Handshake Fellowship · Remote</p>
+                </div>
+                <span class="barsat-card-date">Dec 2025 - Present</span>
+              </div>
+              <ul class="barsat-list">
+                <li>Evaluate and benchmark LLM responses across domain-specific tasks to improve accuracy and reasoning quality.</li>
+                <li>Develop structured prompts and assessment criteria to surface model strengths, weaknesses, and edge cases.</li>
+                <li>Work independently in an asynchronous environment while following detailed specifications and quality guidelines.</li>
+              </ul>
+            </article>
+
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>Machine Learning &amp; Automation Intern</h3>
+                  <p class="barsat-card-org">Datastrut AI · New York, NY</p>
+                </div>
+                <span class="barsat-card-date">Jul 2025 - Sep 2025</span>
+              </div>
+              <ul class="barsat-list">
+                <li>Supported development of LLM-powered automation workflows by testing outputs and identifying performance gaps.</li>
+                <li>Participated in QA meetings with the CEO and CTO, communicating progress and aligning technical work with business goals.</li>
+                <li>Created internal demos and prototypes to evaluate new AI tools and inform adoption decisions.</li>
+              </ul>
+            </article>
+
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>Data Research Analyst</h3>
+                  <p class="barsat-card-org">Cooledtured · Remote</p>
+                </div>
+                <span class="barsat-card-date">Apr 2025 - Dec 2025</span>
+              </div>
+              <ul class="barsat-list">
+                <li>Analyzed sales and customer behavior data to surface trends used in business and performance discussions.</li>
+                <li>Owned data validation and quality checks to ensure accuracy and reliability across reporting datasets.</li>
+                <li>Supported development of performance dashboards to monitor KPIs and communicate insights to stakeholders.</li>
+              </ul>
+            </article>
+
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>Data Research Intern</h3>
+                  <p class="barsat-card-org">Honor Education, University of Michigan · Remote</p>
+                </div>
+                <span class="barsat-card-date">Aug 2024 - Dec 2025</span>
+              </div>
+              <ul class="barsat-list">
+                <li>Collaborated with researchers to evaluate AI-driven personalized learning tools and translate results into actionable insights.</li>
+                <li>Analyzed student performance data to identify trends that informed iterative model and platform improvements.</li>
+                <li>Synthesized findings to support stronger cross-team understanding.</li>
+              </ul>
+            </article>
+
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>Teaching Assistant</h3>
+                  <p class="barsat-card-org">Fordham University · New York, NY</p>
+                </div>
+                <span class="barsat-card-date">Jun 2025 - Aug 2025</span>
+              </div>
+              <ul class="barsat-list">
+                <li>Assisted in teaching Computer Science I, guiding students through projects and problem-solving techniques.</li>
+                <li>Led recitation sessions and adapted technical concepts for students with varying backgrounds.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="barsat-section reveal is-visible" id="projects">
+          <div class="barsat-section-heading">
+            <div>
+              <p class="section-label">Projects</p>
+              <h2>Technical work with a product lens.</h2>
+            </div>
+            <p>
+              I like building projects that pair implementation with clarity around who the tool is for and how it should improve over time.
+            </p>
+          </div>
+
+          <div class="barsat-card-grid">
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>MathPath - AI Math Tutor</h3>
+                  <p class="barsat-card-org">Python, Product Design, AI</p>
+                </div>
+                <span class="barsat-card-date">Jan 2026 - Present</span>
+              </div>
+              <ul class="barsat-list">
+                <li>Built an AI tutoring tool that generates personalized learning paths based on student needs.</li>
+                <li>Designed roadmap visualizations to track progress and identify knowledge gaps.</li>
+                <li>Approached development through a product lens, prioritizing features and iterating on UX.</li>
+              </ul>
+            </article>
+
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>MTA Ridership Analysis</h3>
+                  <p class="barsat-card-org">Python, Jupyter Notebook, Machine Learning</p>
+                </div>
+                <span class="barsat-card-date">Apr 2025 - May 2025</span>
+              </div>
+              <ul class="barsat-list">
+                <li>Analyzed ridership data to uncover usage patterns and forecast demand.</li>
+                <li>Compared models to balance interpretability and predictive performance.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="barsat-two-column reveal is-visible">
+          <section class="barsat-section" id="leadership">
+            <div class="barsat-section-heading">
+              <div>
+                <p class="section-label">Leadership</p>
+                <h2>Building community on campus.</h2>
+              </div>
+            </div>
+
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>President, Computer Science Club</h3>
+                  <p class="barsat-card-org">Fordham University · New York, NY</p>
+                </div>
+                <span class="barsat-card-date">Aug 2025 - Present</span>
+              </div>
+              <ul class="barsat-list">
+                <li>Lead a 50+ member organization hosting technical workshops and career events.</li>
+                <li>Organized Fordham's first RamHack, coordinating logistics, participants, and external judges.</li>
+                <li>Partner with faculty and organizations to align programming with student interests.</li>
+              </ul>
+            </article>
+          </section>
+
+          <section class="barsat-section" id="education">
+            <div class="barsat-section-heading">
+              <div>
+                <p class="section-label">Education</p>
+                <h2>Computer science, cybersecurity, and applied learning.</h2>
+              </div>
+            </div>
+
+            <article class="barsat-card">
+              <div class="barsat-card-header">
+                <div>
+                  <h3>Fordham University</h3>
+                  <p class="barsat-card-org">B.S. Computer Science, Minor in Cybersecurity</p>
+                </div>
+                <span class="barsat-card-date">Aug 2023 - May 2027</span>
+              </div>
+              <p class="barsat-note">
+                Based in New York, NY with a 3.6 GPA. My coursework and internships have pushed me toward roles that blend technical depth with product and user impact.
+              </p>
+            </article>
+
+            <div class="barsat-link-list">
+              <div class="barsat-link-row">
+                <div>
+                  <strong>Email</strong>
+                  <span>barsatrithi@gmail.com</span>
+                </div>
+                <a href="mailto:barsatrithi@gmail.com">Say Hello</a>
+              </div>
+              <div class="barsat-link-row">
+                <div>
+                  <strong>Phone</strong>
+                  <span>646-716-2122</span>
+                </div>
+                <a href="tel:6467162122">Call</a>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="barsat-section reveal is-visible" id="links">
+          <div class="barsat-section-heading">
+            <div>
+              <p class="section-label">Links</p>
+              <h2>Places to find my work.</h2>
+            </div>
+            <p>
+              My profile is still evolving, but these are the best places to follow along as I keep building.
+            </p>
+          </div>
+
+          <div class="barsat-link-list">
+            <div class="barsat-link-row">
+              <div>
+                <strong>GitHub</strong>
+                <span>Code, experiments, and project repos</span>
+              </div>
+              <a href="https://github.com/barsatrithi" target="_blank" rel="noreferrer">github.com/barsatrithi</a>
+            </div>
+            <div class="barsat-link-row">
+              <div>
+                <strong>LinkedIn</strong>
+                <span>Experience, community work, and professional updates</span>
+              </div>
+              <a href="https://www.linkedin.com/in/barsat-rithi-a822b2253/" target="_blank" rel="noreferrer">linkedin.com/in/barsat-rithi-a822b2253</a>
+            </div>
+            <div class="barsat-link-row">
+              <div>
+                <strong>Resume</strong>
+                <span>Full PDF version of my current resume</span>
+              </div>
+              <a href="../assets/barsat-rithi-resume-april-2026.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <p class="barsat-footer">Designed as a member page inside the Fordham CS Club site and ready to keep growing over time.</p>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase-config.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>

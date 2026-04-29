@@ -128,9 +128,9 @@ async function loadMembers() {
     },
     {
       initials: "BR",
-      name: "Example Member Page",
-      description: "A starter personal page placeholder that can become your example profile once you send your details.",
-      page_url: "members/example-member.html",
+      name: "Barsat Rithi",
+      description: "It's BARSAT!!",
+      page_url: "Members/Barsat Rithi/barsat-rithi-copy.html",
     },
     {
       initials: "?",
