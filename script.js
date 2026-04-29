@@ -124,7 +124,7 @@ async function loadMembers() {
       initials: "KB",
       name: "Katherine :)",
       description: "Hi y'all! Check out my website to find out a lil more abt me!",
-      page_url: "members/Katherine/PWKB.html",
+      page_url: "Members/Katherine Bonilla/PWKB.html",
     },
     {
       initials: "BR",
