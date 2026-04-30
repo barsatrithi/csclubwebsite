@@ -3,15 +3,15 @@
 }
 
 html {
-    background-color: rgb(176, 205, 177);
+    background-color: rgb(212, 144, 231);
 }
 
 /*** body ***/
 body {
-background-color: rgb(176, 205, 177);
+background-color: rgb(212, 144, 231);
 
 font-size: 16px;
-color: rgb(16, 63, 17);
+color: rgb(243, 247, 243);
 font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; /* This tells the browser: "Try to use `Tahoma`, and if you can't find it, use any sans-serif font." */
 
 margin: 40px;
@@ -46,7 +46,7 @@ h4 {
 
 p {
     font-family:Arial, Helvetica, sans-serif;
-    color: rgb(2, 49, 18);  
+    color: rgb(27, 79, 45);  
     margin-left: 30px; 
     margin-right: 30px;
     margin-bottom: 35px;
@@ -55,6 +55,8 @@ p {
 
 img {
     width: 400px;
+    height: 250px;
+    object-fit: cover;
 }
 
 ul{
@@ -63,7 +65,8 @@ ul{
 
 /***modify buttons ***/
 button {
-    background-color:rgb(186, 237, 188);
+    background-color:rgb(166, 54, 178);
+    color:var(--accent-color-light);
     font-size:15px ;
     padding: 10px;
     margin: 10px;
@@ -76,14 +79,14 @@ button {
 
 button:hover {
     /* Make the button look different when the user hovers over it */
-    color: rgb(108, 234, 154);
-    background-color: rgb(108, 234, 154) ;
+    color: rgb(246, 250, 248);
+    background-color: rgb(71, 145, 98) ;
 }
 
 /***header***/
 .header-container {
     text-align: center;
-    background-color: rgb(78, 189, 136);
+    background-color: rgb(197, 124, 217);
     margin: 15px;
     padding: 10px;
     margin-top: 20px;
@@ -125,8 +128,8 @@ button:hover {
     left: 0;
     bottom: 0;
     width: 100%;
-    background-color: darkgreen;
-    color: black;
+    background-color: rgb(20, 1, 20);
+    color: rgb(249, 245, 245);
     text-align: left;
     padding: 15px;
     font-style: normal;
@@ -142,8 +145,7 @@ button:hover {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #0e431e;
-
+    background-color: #611156be;
     margin-top:0px;
     padding: 3px;
 }
@@ -168,7 +170,7 @@ button:hover {
 
 /***Links***/
 a:link {
-    color: rgb(43, 110, 72);
+    color: #d6f8e5;
     text-decoration: double;
 }
 
