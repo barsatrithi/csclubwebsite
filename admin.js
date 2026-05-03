@@ -1,111 +1,57 @@
 const adminLoginForm = document.getElementById("admin-login-form");
+const adminRecoveryButton = document.getElementById("admin-recovery-button");
 const adminLogoutButton = document.getElementById("admin-logout-button");
 const adminStatus = document.getElementById("admin-status");
 const adminDashboard = document.getElementById("admin-dashboard");
-const adminSections = document.getElementById("admin-sections");
+const adminEventForm = document.getElementById("admin-event-form");
+const adminEventResetButton = document.getElementById("admin-event-reset-button");
+const adminEventRefreshButton = document.getElementById("admin-event-refresh-button");
+const adminEventStatus = document.getElementById("admin-event-status");
+const adminEventList = document.getElementById("admin-event-list");
 
-const adminClient = createSupabaseClient();
+const adminClient = createAdminClient();
+let approvedAdmin = null;
+let authRequestCounter = 0;
 
-const adminTableConfigs = [
-  {
-    table: "site_settings",
-    title: "Site Settings",
-    description: "Shared branding, headings, and intro copy used across the site.",
-    primaryKey: "key",
-    orderBy: { column: "key", ascending: true },
-    allowDelete: false,
-    fields: [
-      { name: "key", label: "Key", type: "text", required: true },
-      { name: "value", label: "Value", type: "textarea", required: true },
-    ],
-  },
-  {
-    table: "events",
-    title: "Events",
-    description: "Upcoming workshops, meetups, and club programming.",
-    primaryKey: "id",
-    orderBy: { column: "id", ascending: true },
-    fields: [
-      { name: "tag", label: "Tag", type: "text", required: true },
-      { name: "title", label: "Title", type: "text", required: true },
-      { name: "date", label: "Date", type: "text", required: true },
-      { name: "location", label: "Location", type: "text", required: true },
-      { name: "description", label: "Description", type: "textarea", required: true },
-    ],
-  },
-  {
-    table: "team_members",
-    title: "Team Members",
-    description: "Leadership cards for the Meet the Team page.",
-    primaryKey: "id",
-    orderBy: { column: "display_order", ascending: true },
-    fields: [
-      { name: "badge", label: "Badge", type: "text", required: true },
-      { name: "role", label: "Role", type: "text", required: true },
-      { name: "bio", label: "Bio", type: "textarea", required: true },
-      { name: "display_order", label: "Display Order", type: "number", required: true },
-    ],
-  },
-  {
-    table: "site_links",
-    title: "Site Links",
-    description: "Discord, Instagram, email, and other public contact links.",
-    primaryKey: "id",
-    orderBy: { column: "display_order", ascending: true },
-    fields: [
-      { name: "label", label: "Label", type: "text", required: true },
-      { name: "title", label: "Title", type: "text", required: true },
-      { name: "description", label: "Description", type: "textarea", required: true },
-      { name: "url", label: "URL", type: "url" },
-      { name: "display_order", label: "Display Order", type: "number", required: true },
-    ],
-  },
-  {
-    table: "resources",
-    title: "Resources",
-    description: "Support links and learning resources shown on the Resources page.",
-    primaryKey: "id",
-    orderBy: { column: "display_order", ascending: true },
-    fields: [
-      { name: "category", label: "Category", type: "text", required: true },
-      { name: "title", label: "Title", type: "text", required: true },
-      { name: "description", label: "Description", type: "textarea", required: true },
-      { name: "url", label: "URL", type: "url" },
-      { name: "display_order", label: "Display Order", type: "number", required: true },
-    ],
-  },
-  {
-    table: "members",
-    title: "Members",
-    description: "Cards and profile links for the member hub.",
-    primaryKey: "id",
-    orderBy: { column: "display_order", ascending: true },
-    fields: [
-      { name: "initials", label: "Initials", type: "text", required: true },
-      { name: "name", label: "Name", type: "text", required: true },
-      { name: "description", label: "Description", type: "textarea", required: true },
-      { name: "page_url", label: "Page URL", type: "text", required: true },
-      { name: "is_public", label: "Public", type: "checkbox" },
-      { name: "display_order", label: "Display Order", type: "number", required: true },
-    ],
-  },
-];
-
-if (adminClient && adminLoginForm && adminSections) {
-  setAdminStatus("Sign in to continue.");
+if (adminClient && adminLoginForm && adminDashboard && adminEventForm && adminEventList) {
+  setAdminStatus("Sign in with an approved admin email.");
   adminLoginForm.addEventListener("submit", handleAdminLogin);
+  adminRecoveryButton?.addEventListener("click", handlePasswordRecovery);
   adminLogoutButton?.addEventListener("click", handleAdminLogout);
-  adminSections.addEventListener("submit", handleRecordSave);
-  adminSections.addEventListener("click", handleAdminClick);
+  adminEventForm.addEventListener("submit", handleEventSave);
+  adminEventResetButton?.addEventListener("click", resetEventForm);
+  adminEventRefreshButton?.addEventListener("click", loadAdminEvents);
 
-  adminClient.auth.onAuthStateChange(async (_event, session) => {
+  adminClient.auth.onAuthStateChange(async (authEvent, session) => {
+    console.log('auth event: ', authEvent, 'authCounter: ', authRequestCounter);
+
+    if (authEvent == 'INITIAL_SESSION') return;
+    
+    // TOKEN_REFRESHED fires often (Supabase refreshes tokens silently).
+    // If an admin is already verified, skip re-running the full approval check.
+    // Without this guard a TOKEN_REFRESHED mid-login increments authRequestCounter
+    // and causes the in-flight SIGNED_IN handler to bail early, freezing the UI.
+    if (authEvent === "TOKEN_REFRESHED" && approvedAdmin) {
+      return;
+    }
     await updateAdminSessionState(session);
   });
 
-  initializeAdminDashboard();
+  initializeAdmin();
 }
 
-async function initializeAdminDashboard() {
+function createAdminClient() {
+  const config = window.supabaseConfig;
+  const supabaseBrowser = window.supabase;
+
+  if (!config?.url || !config?.anonKey || !supabaseBrowser?.createClient) {
+    return null;
+  }
+
+  return supabaseBrowser.createClient(config.url, config.anonKey, {auth: {persistSession: false}});
+}
+
+async function initializeAdmin() {
   const { data, error } = await adminClient.auth.getSession();
 
   if (error) {
@@ -125,9 +71,37 @@ async function handleAdminLogin(event) {
 
   setAdminStatus("Signing in...");
 
-  const { error } = await adminClient.auth.signInWithPassword({
-    email,
-    password,
+  const { error } = await adminClient.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    setAdminStatus(error.message, true);
+    return;
+  }
+
+  // Do NOT call updateAdminSessionState here.
+  // onAuthStateChange will fire and handle the session transition.
+  // Calling it here too creates a race: both calls increment authRequestCounter,
+  // and a mid-flight TOKEN_REFRESHED event can cause all instances to bail out
+  // early, leaving the UI frozen at "Looking up your admin approval..."
+  adminLoginForm.reset();
+  if (authEvent == 'SIGNED_IN'){
+    setAdminStatus("Signed in. Verifying admin approval…");
+  }
+}
+
+async function handlePasswordRecovery() {
+  const emailInput = adminLoginForm.querySelector('input[name="email"]');
+  const email = String(emailInput?.value || "").trim();
+
+  if (!email) {
+    setAdminStatus("Enter the admin email first, then click Password Reset.", true);
+    return;
+  }
+
+  setAdminStatus("Sending password reset email...");
+
+  const { error } = await adminClient.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href,
   });
 
   if (error) {
@@ -135,8 +109,7 @@ async function handleAdminLogin(event) {
     return;
   }
 
-  adminLoginForm.reset();
-  setAdminStatus("Signed in.");
+  setAdminStatus("Password reset email sent. Open the link from the email and then return here to sign in.");
 }
 
 async function handleAdminLogout() {
@@ -147,281 +120,384 @@ async function handleAdminLogout() {
     return;
   }
 
+  approvedAdmin = null;
+  adminDashboard.hidden = true;
+  adminLogoutButton.hidden = true;
+  adminEventList.innerHTML = "";
   setAdminStatus("Signed out.");
 }
 
-async function updateAdminSessionState(session) {
-  const isSignedIn = Boolean(session?.user);
-
-  adminDashboard.hidden = !isSignedIn;
-  adminLogoutButton.hidden = !isSignedIn;
-
-  if (!isSignedIn) {
-    adminSections.innerHTML = "";
+async function updateAdminSessionState(session, requestId = ++authRequestCounter) {
+  if (!session?.user) {
+    approvedAdmin = null;
+    adminDashboard.hidden = true;
+    adminLogoutButton.hidden = true;
+    adminEventList.innerHTML = "";
+    setEventStatus("");
     return;
   }
 
-  setAdminStatus(`Signed in as ${session.user.email}`);
-  await loadAdminData();
-}
+  setAdminStatus("Signed in. Looking up your admin approval...");
+  const adminRecord = await fetchApprovedAdmin(session.user);
 
-async function loadAdminData() {
-  const sectionMarkup = await Promise.all(
-    adminTableConfigs.map(async (config) => renderAdminSection(config, await fetchAdminRows(config)))
-  );
-
-  adminSections.innerHTML = sectionMarkup.join("");
-}
-
-async function fetchAdminRows(config) {
-  let query = adminClient.from(config.table).select(buildSelectColumns(config));
-
-  if (config.orderBy?.column) {
-    query = query.order(config.orderBy.column, { ascending: config.orderBy.ascending !== false });
+  if (requestId !== authRequestCounter) {
+    return;
   }
 
-  const { data, error } = await query;
+  if (!adminRecord) {
+    approvedAdmin = null;
+    adminDashboard.hidden = true;
+    adminLogoutButton.hidden = true;
+    setAdminStatus("This account is authenticated, but it is not approved in admin_users.", true);
+    await adminClient.auth.signOut();
+    return;
+  }
+
+  approvedAdmin = adminRecord;
+  adminDashboard.hidden = false;
+  adminLogoutButton.hidden = false;
+  setAdminStatus("Admin account verified. Syncing dashboard access...");
+  await syncAdminUserId(session.user, adminRecord);
+  if (requestId !== authRequestCounter) {
+    return;
+  }
+  setAdminStatus(`Signed in as ${adminRecord.name || session.user.email}`);
+  await loadAdminEvents();
+}
+
+async function fetchApprovedAdmin(user) {
+  const email = String(user.email || "").trim().toLowerCase();
+
+  if (!email) {
+    return null;
+  }
+
+  const byUserId = await adminClient
+    .from("admin_users")
+    .select("email, name, role, user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (byUserId.error) {
+    setAdminStatus(`Could not verify admin access: ${byUserId.error.message}`, true);
+    return null;
+  }
+
+  if (byUserId.data) {
+    return byUserId.data;
+  }
+
+  const { data, error } = await adminClient
+    .from("admin_users")
+    .select("email, name, role, user_id")
+    .ilike("email", email)
+    .limit(1);
 
   if (error) {
-    setAdminStatus(`Failed to load ${config.title.toLowerCase()}: ${error.message}`, true);
-    return [];
+    setAdminStatus(`Could not verify admin access: ${error.message}`, true);
+    return null;
   }
 
-  return data || [];
+  return Array.isArray(data) && data.length ? data[0] : null;
 }
 
-function renderAdminSection(config, rows) {
-  const recordsMarkup = rows.length
-    ? rows.map((row) => renderRecordCard(config, row, false)).join("")
-    : `<div class="admin-empty-state">No records yet.</div>`;
-
-  return `
-    <section class="admin-section">
-      <div class="admin-section-heading">
-        <div>
-          <h3>${config.title}</h3>
-          <p>${config.description}</p>
-        </div>
-        <button class="button button-secondary admin-refresh-button" type="button" data-action="refresh-section" data-table="${config.table}">
-          Refresh
-        </button>
-      </div>
-      <div class="admin-record-grid" id="section-${config.table}">
-        ${recordsMarkup}
-        ${renderRecordCard(config, {}, true)}
-      </div>
-    </section>
-  `;
-}
-
-function renderRecordCard(config, row, isNew) {
-  const identifier = isNew ? "new" : escapeHtml(String(row[config.primaryKey]));
-  const actionLabel = isNew ? "Add Record" : "Save Changes";
-  const cardTitle = isNew ? `New ${config.title.slice(0, -1) || config.title}` : `${config.title.slice(0, -1) || config.title} #${identifier}`;
-
-  return `
-    <form class="admin-record-card" data-table="${config.table}" data-mode="${isNew ? "create" : "edit"}" data-primary-key="${config.primaryKey}" data-primary-value="${identifier}">
-      <div class="admin-record-header">
-        <h4>${cardTitle}</h4>
-        ${!isNew && config.allowDelete !== false ? `<button class="button button-secondary admin-delete-button" type="button" data-action="delete-record">Delete</button>` : ""}
-      </div>
-      <div class="admin-record-fields">
-        ${config.fields.map((field) => renderAdminField(field, row[field.name], isNew && field.name === config.primaryKey && config.primaryKey === "id")).join("")}
-      </div>
-      <button class="button button-primary" type="submit">${actionLabel}</button>
-    </form>
-  `;
-}
-
-function renderAdminField(field, value, skipField) {
-  if (skipField) {
-    return "";
-  }
-
-  if (field.type === "checkbox") {
-    return `
-      <label class="admin-field admin-checkbox-field">
-        <input type="checkbox" name="${field.name}" ${value ? "checked" : ""}>
-        <span>${field.label}</span>
-      </label>
-    `;
-  }
-
-  const safeValue = typeof value === "string" || typeof value === "number" ? escapeHtml(String(value)) : "";
-  const required = field.required ? "required" : "";
-  const isLockedSettingKey = field.name === "key" && safeValue.length > 0;
-  const readOnly = isLockedSettingKey ? "readonly" : "";
-
-  if (field.type === "textarea") {
-    return `
-      <label class="admin-field">
-        <span>${field.label}</span>
-        <textarea name="${field.name}" ${required} ${readOnly}>${safeValue}</textarea>
-      </label>
-    `;
-  }
-
-  return `
-    <label class="admin-field">
-      <span>${field.label}</span>
-      <input type="${field.type || "text"}" name="${field.name}" value="${safeValue}" ${required} ${readOnly}>
-    </label>
-  `;
-}
-
-async function handleRecordSave(event) {
-  event.preventDefault();
-
-  const form = event.target.closest(".admin-record-card");
-
-  if (!form) {
+async function syncAdminUserId(user, adminRecord) {
+  if (!user?.id || !adminRecord?.email || adminRecord.user_id === user.id) {
     return;
   }
 
-  const table = form.dataset.table;
-  const config = adminTableConfigs.find((item) => item.table === table);
+  const { error } = await adminClient
+    .from("admin_users")
+    .update({ user_id: user.id })
+    .eq("email", adminRecord.email);
 
-  if (!config) {
+  if (error) {
+    setAdminStatus(`Signed in, but could not sync admin profile: ${error.message}`, true);
+  }
+}
+
+async function loadAdminEvents() {
+  setEventStatus("Loading events...");
+  const { data, error } = await adminClient
+    .from("events")
+    .select("id, title, tag, description, location, starts_at, ends_at, flyer_path, flyer_url, registration_url, is_published, created_at, updated_at")
+    .order("starts_at", { ascending: true });
+
+  if (error) {
+    setAdminStatus(`Admin access is valid, but events could not load: ${error.message}`, true);
+    setEventStatus(error.message, true);
     return;
   }
 
-  const formData = new FormData(form);
-  const payload = {};
+  setEventStatus("");
+  renderAdminEvents(data || []);
+}
 
-  config.fields.forEach((field) => {
-    if (field.type === "checkbox") {
-      payload[field.name] = formData.get(field.name) === "on";
-      return;
-    }
+function renderAdminEvents(events) {
+  if (!events.length) {
+    adminEventList.innerHTML = `<div class="admin-empty-state">No events yet. Create your first one using the form.</div>`;
+    return;
+  }
 
-    const rawValue = formData.get(field.name);
+  adminEventList.innerHTML = events
+    .map(
+      (event) => `
+        <article class="admin-event-card">
+          <div class="admin-event-card-copy">
+            <span class="event-tag">${escapeHtml(event.tag)}</span>
+            <h3>${escapeHtml(event.title)}</h3>
+            <p>${escapeHtml(event.description)}</p>
+            <div class="event-meta">
+              <span>${formatEventDate(event.starts_at, event.ends_at)}</span>
+              <span>${escapeHtml(event.location)}</span>
+            </div>
+            <p class="admin-event-card-status">${event.is_published ? "Published" : "Draft"}</p>
+            ${event.flyer_url ? `<a class="connect-card-link" href="${escapeAttribute(event.flyer_url)}" target="_blank" rel="noreferrer">Open Flyer</a>` : ""}
+          </div>
+          <div class="admin-auth-actions">
+            <button class="button button-secondary" type="button" data-action="edit-event" data-id="${event.id}">Edit</button>
+            <button class="button button-secondary" type="button" data-action="delete-event" data-id="${event.id}" data-flyer-path="${escapeAttribute(event.flyer_path || "")}">Delete</button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
 
-    if (rawValue === null) {
-      return;
-    }
-
-    const stringValue = String(rawValue).trim();
-
-    if (!stringValue.length && !field.required) {
-      payload[field.name] = null;
-      return;
-    }
-
-    if (field.type === "number") {
-      payload[field.name] = Number(stringValue);
-      return;
-    }
-
-    payload[field.name] = stringValue;
+  adminEventList.querySelectorAll('[data-action="edit-event"]').forEach((button) => {
+    button.addEventListener("click", () => populateEventForm(events.find((event) => String(event.id) === button.dataset.id)));
   });
 
-  if (form.dataset.mode === "edit" && config.primaryKey !== "key") {
-    payload[config.primaryKey] = Number(form.dataset.primaryValue);
+  adminEventList.querySelectorAll('[data-action="delete-event"]').forEach((button) => {
+    button.addEventListener("click", () => deleteEventRecord(button.dataset.id, button.dataset.flyerPath || ""));
+  });
+}
+
+function populateEventForm(event) {
+  if (!event) {
+    return;
   }
 
-  if (form.dataset.mode === "edit" && config.primaryKey === "key") {
-    payload[config.primaryKey] = form.dataset.primaryValue;
+  adminEventForm.elements.id.value = event.id;
+  adminEventForm.elements.title.value = event.title || "";
+  adminEventForm.elements.tag.value = event.tag || "";
+  adminEventForm.elements.description.value = event.description || "";
+  adminEventForm.elements.location.value = event.location || "";
+  adminEventForm.elements.starts_at.value = toDateTimeLocalValue(event.starts_at);
+  adminEventForm.elements.ends_at.value = toDateTimeLocalValue(event.ends_at);
+  adminEventForm.elements.registration_url.value = event.registration_url || "";
+  adminEventForm.elements.existing_flyer_path.value = event.flyer_path || "";
+  adminEventForm.elements.existing_flyer_url.value = event.flyer_url || "";
+  adminEventForm.elements.is_published.checked = Boolean(event.is_published);
+  adminEventForm.elements.flyer.value = "";
+  setEventStatus(`Editing "${event.title}".`);
+}
+
+function resetEventForm() {
+  adminEventForm.reset();
+  adminEventForm.elements.id.value = "";
+  adminEventForm.elements.existing_flyer_path.value = "";
+  adminEventForm.elements.existing_flyer_url.value = "";
+  setEventStatus("Event form cleared.");
+}
+
+async function handleEventSave(event) {
+  event.preventDefault();
+
+  if (!approvedAdmin) {
+    setEventStatus("You must be signed in as an approved admin.", true);
+    return;
   }
 
-  setAdminStatus(`Saving ${config.title.toLowerCase()}...`);
+  const formData = new FormData(adminEventForm);
+  const existingFlyerPath = String(formData.get("existing_flyer_path") || "");
+  const existingFlyerUrl = String(formData.get("existing_flyer_url") || "");
+  const flyerFile = formData.get("flyer");
+
+  setEventStatus("Saving event...");
+
+  let flyerPath = existingFlyerPath || null;
+  let flyerUrl = existingFlyerUrl || null;
+
+  if (flyerFile instanceof File && flyerFile.size > 0) {
+    const uploadedFlyer = await uploadEventFlyer(flyerFile, formData.get("title"));
+
+    if (!uploadedFlyer) {
+      return;
+    }
+
+    flyerPath = uploadedFlyer.path;
+    flyerUrl = uploadedFlyer.url;
+  }
+
+  const payload = {
+    title: String(formData.get("title") || "").trim(),
+    tag: String(formData.get("tag") || "").trim(),
+    description: String(formData.get("description") || "").trim(),
+    location: String(formData.get("location") || "").trim(),
+    starts_at: formatForDatabase(formData.get("starts_at")),
+    ends_at: formData.get("ends_at") ? formatForDatabase(formData.get("ends_at")) : null,
+    registration_url: String(formData.get("registration_url") || "").trim() || null,
+    flyer_path: flyerPath,
+    flyer_url: flyerUrl,
+    is_published: formData.get("is_published") === "on",
+  };
+
+  const id = String(formData.get("id") || "").trim();
+
+  if (id) {
+    payload.id = Number(id);
+  }
 
   const { error } = await adminClient
-    .from(config.table)
-    .upsert(payload, { onConflict: config.primaryKey });
+    .from("events")
+    .upsert(payload, { onConflict: "id" });
 
   if (error) {
-    setAdminStatus(error.message, true);
+    setAdminStatus(`Event save failed: ${error.message}`, true);
+    setEventStatus(error.message, true);
     return;
   }
 
-  setAdminStatus(`${config.title} saved.`);
-  await refreshAdminSection(config.table);
+  setAdminStatus("Event saved successfully.");
+  setEventStatus("Event saved.");
+  resetEventForm();
+  await loadAdminEvents();
 }
 
-async function handleAdminClick(event) {
-  const actionTarget = event.target.closest("[data-action]");
+async function uploadEventFlyer(file, titleValue) {
+  const safeTitle = String(titleValue || "event")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 50) || "event";
+  const extension = (file.name.split(".").pop() || "png").toLowerCase();
+  const filePath = `${Date.now()}-${safeTitle}.${extension}`;
 
-  if (!actionTarget) {
-    return;
+  const { error: uploadError } = await adminClient.storage
+    .from("event-flyers")
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: file.type || undefined,
+    });
+
+  if (uploadError) {
+    setAdminStatus(`Flyer upload failed: ${uploadError.message}`, true);
+    setEventStatus(uploadError.message, true);
+    return null;
   }
 
-  const action = actionTarget.dataset.action;
-  const card = actionTarget.closest(".admin-record-card");
+  const { data } = adminClient.storage.from("event-flyers").getPublicUrl(filePath);
 
-  if (action === "refresh-section") {
-    await refreshAdminSection(actionTarget.dataset.table);
-    return;
-  }
-
-  if (action === "delete-record" && card) {
-    await deleteAdminRecord(card);
-  }
+  return {
+    path: filePath,
+    url: data.publicUrl,
+  };
 }
 
-async function deleteAdminRecord(card) {
-  const table = card.dataset.table;
-  const primaryKey = card.dataset.primaryKey;
-  const primaryValue = card.dataset.primaryValue;
-  const config = adminTableConfigs.find((item) => item.table === table);
-
-  if (!config) {
-    return;
-  }
-
-  const parsedValue = primaryKey === "id" ? Number(primaryValue) : primaryValue;
-
-  setAdminStatus(`Deleting ${config.title.toLowerCase()} record...`);
+async function deleteEventRecord(idValue, flyerPath) {
+  setEventStatus("Deleting event...");
 
   const { error } = await adminClient
-    .from(table)
+    .from("events")
     .delete()
-    .eq(primaryKey, parsedValue);
+    .eq("id", Number(idValue));
 
   if (error) {
-    setAdminStatus(error.message, true);
+    setAdminStatus(`Delete failed: ${error.message}`, true);
+    setEventStatus(error.message, true);
     return;
   }
 
-  setAdminStatus("Record deleted.");
-  await refreshAdminSection(table);
-}
-
-async function refreshAdminSection(table) {
-  const config = adminTableConfigs.find((item) => item.table === table);
-
-  if (!config) {
-    return;
+  if (flyerPath) {
+    await adminClient.storage.from("event-flyers").remove([flyerPath]);
   }
 
-  const sectionContainer = document.getElementById(`section-${table}`)?.closest(".admin-section");
-
-  if (!sectionContainer) {
-    await loadAdminData();
-    return;
+  if (String(adminEventForm.elements.id.value) === String(idValue)) {
+    resetEventForm();
   }
 
-  sectionContainer.outerHTML = renderAdminSection(config, await fetchAdminRows(config));
-}
-
-function buildSelectColumns(config) {
-  const columns = new Set([config.primaryKey, ...config.fields.map((field) => field.name)]);
-  return Array.from(columns).join(", ");
+  setEventStatus("Event deleted.");
+  await loadAdminEvents();
 }
 
 function setAdminStatus(message, isError = false) {
-  if (!adminStatus) {
-    return;
-  }
-
   adminStatus.textContent = message;
   adminStatus.dataset.state = isError ? "error" : "default";
 }
 
+function setEventStatus(message, isError = false) {
+  adminEventStatus.textContent = message;
+  adminEventStatus.dataset.state = isError ? "error" : "default";
+}
+
+function formatForDatabase(value) {
+  if (!value) {
+    return null;
+  }
+
+  return new Date(String(value)).toISOString();
+}
+
+function toDateTimeLocalValue(value) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return offsetDate.toISOString().slice(0, 16);
+}
+
+function formatEventDate(startsAt, endsAt) {
+  const startDate = new Date(startsAt);
+
+  if (Number.isNaN(startDate.getTime())) {
+    return "Date to be announced";
+  }
+
+  const datePart = startDate.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  const startTime = startDate.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  if (!endsAt) {
+    return `${datePart} • ${startTime}`;
+  }
+
+  const endDate = new Date(endsAt);
+
+  if (Number.isNaN(endDate.getTime())) {
+    return `${datePart} • ${startTime}`;
+  }
+
+  const endTime = endDate.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  return `${datePart} • ${startTime} - ${endTime}`;
+}
+
 function escapeHtml(value) {
-  return value
+  return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function escapeAttribute(value) {
+  return escapeHtml(value);
 }
