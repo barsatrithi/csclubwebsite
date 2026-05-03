@@ -23,6 +23,10 @@ if (adminClient && adminLoginForm && adminDashboard && adminEventForm && adminEv
   adminEventRefreshButton?.addEventListener("click", loadAdminEvents);
 
   adminClient.auth.onAuthStateChange(async (authEvent, session) => {
+    console.log('auth event: ', authEvent, 'authCounter: ', authRequestCounter);
+
+    if (authEvent == 'INITIAL_SESSION') return;
+    
     // TOKEN_REFRESHED fires often (Supabase refreshes tokens silently).
     // If an admin is already verified, skip re-running the full approval check.
     // Without this guard a TOKEN_REFRESHED mid-login increments authRequestCounter
@@ -44,7 +48,7 @@ function createAdminClient() {
     return null;
   }
 
-  return supabaseBrowser.createClient(config.url, config.anonKey);
+  return supabaseBrowser.createClient(config.url, config.anonKey, {auth: {persistSession: false}});
 }
 
 async function initializeAdmin() {
@@ -80,7 +84,9 @@ async function handleAdminLogin(event) {
   // and a mid-flight TOKEN_REFRESHED event can cause all instances to bail out
   // early, leaving the UI frozen at "Looking up your admin approval..."
   adminLoginForm.reset();
-  setAdminStatus("Signed in. Verifying admin approval…");
+  if (authEvent == 'SIGNED_IN'){
+    setAdminStatus("Signed in. Verifying admin approval…");
+  }
 }
 
 async function handlePasswordRecovery() {
