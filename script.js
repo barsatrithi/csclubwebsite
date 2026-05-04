@@ -130,7 +130,7 @@ async function loadMembers() {
       initials: "BR",
       name: "Barsat Rithi",
       description: "It's BARSAT!!",
-      page_url: "Members/Barsat Rithi/barsat-rithi-copy.html",
+      page_url: "Members/Barsat Rithi/barsat-rithi.html",
     },
     {
       initials: "?",
