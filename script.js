@@ -295,21 +295,21 @@ async function loadSiteLinks() {
   const fallbackSiteLinks = [
     {
       label: "Discord",
-      title: "Server link coming soon",
-      description: "Use this area for a join link, server invite button, and a short note about what members can expect there.",
-      url: null,
+      title: "Join the Fordham CS Club server",
+      description: "Hop into the Discord to hear about events, club updates, and conversations with other members.",
+      url: "https://discord.gg/jNXR8epwh5",
     },
     {
       label: "Instagram",
       title: "@fordhamcsclub",
-      description: "Perfect for event reminders, workshop recaps, and announcements.",
-      url: null,
+      description: "Follow the club on Instagram for event reminders, announcements, and highlights from club activities.",
+      url: "https://www.instagram.com/fordhamcsclub/",
     },
     {
       label: "Email",
-      title: "club email placeholder",
-      description: "Add your official contact email here so students and campus partners know where to reach the club.",
-      url: null,
+      title: "codingclublc@fordham.edu",
+      description: "Reach out by email for questions about the club, collaborations, or getting involved.",
+      url: "mailto:codingclublc@fordham.edu",
     },
   ];
 
