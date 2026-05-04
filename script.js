@@ -151,8 +151,22 @@ async function loadMembers() {
     ascending: true,
   });
 
+  const uniqueMembers = [
+    ...(Array.isArray(supabaseMembers) ? supabaseMembers : []),
+    ...fallbackMembers,
+  ].filter((member, index, members) => {
+    return (
+      index ===
+      members.findIndex((candidate) => {
+        const samePage = member.page_url && candidate.page_url && candidate.page_url === member.page_url;
+        const sameName = member.name && candidate.name && candidate.name === member.name;
+        return samePage || sameName;
+      })
+    );
+  });
+
   renderMembers(
-    Array.isArray(supabaseMembers) && supabaseMembers.length ? supabaseMembers : fallbackMembers,
+    uniqueMembers,
     membersList
   );
 }
@@ -223,38 +237,52 @@ async function loadTeamMembers() {
     return;
   }
 
-  const fallbackTeamMembers = [
+  const teamMembers = [
     {
-      badge: "01",
+      image: "assets/barsat-rithi-president.png",
+      name: "Barsat Rithi",
       role: "President",
-      bio: "Photo and leadership bio coming soon.",
+      bio: "Senior studying computer science.",
     },
     {
-      badge: "02",
+      image: "assets/nik-vicepresident.png",
+      name: "Nikolas Tanner",
       role: "Vice President",
-      bio: "Photo and leadership bio coming soon.",
+      bio: "Senior studying computer science.",
     },
     {
-      badge: "03",
-      role: "Treasurer",
-      bio: "Photo and leadership bio coming soon.",
-    },
-    {
-      badge: "04",
+      image: "assets/miles-ehrlich-secrectary.png",
+      name: "Miles Ehrlich",
       role: "Secretary",
-      bio: "Photo and leadership bio coming soon.",
+      bio: "Senior studying Math + CS.",
+    },
+    {
+      image: "assets/ogulshat-gulova-treasurer.png",
+      name: "Ogulshat Gulova",
+      role: "Treasurer",
+      bio: "Senior in the Gabelli School of Business studying Finance.",
+    },
+    {
+      image: "assets/leslie-palaguachi-socialmedia.png",
+      name: "Leslie Palaguachi",
+      role: "Social Media Coordinator",
+      bio: "Sophomore studying computer science.",
+    },
+    {
+      image: "assets/gabriela-angarita-eventcoordinator.png",
+      name: "Gabriela Angarita",
+      role: "Event Coordinator",
+      bio: "Senior studying computer science.",
+    },
+    {
+      image: "assets/jasmina-abdullaeva-hackathondirector.png",
+      name: "Jasmina Abdullaeva",
+      role: "Hackathon Director",
+      bio: "Senior studying Computer Science, and upcoming M.S. in Computer Science at Fordham GSAS.",
     },
   ];
 
-  const supabaseTeamMembers = await loadTableFromSupabase("team_members", "badge, role, bio", {
-    column: "display_order",
-    ascending: true,
-  });
-
-  renderTeamMembers(
-    Array.isArray(supabaseTeamMembers) && supabaseTeamMembers.length ? supabaseTeamMembers : fallbackTeamMembers,
-    teamList
-  );
+  renderTeamMembers(teamMembers, teamList);
 }
 
 async function loadSiteLinks() {
@@ -382,8 +410,11 @@ function renderTeamMembers(teamMembers, container) {
     .map(
       (member) => `
         <article class="profile-card reveal is-visible">
-          <div class="profile-avatar">${member.badge}</div>
-          <h3>${member.role}</h3>
+          <img class="profile-photo" src="${member.image}" alt="${member.name}, ${member.role}">
+          <div class="profile-meta">
+            <p>${member.role}</p>
+            <h3>${member.name}</h3>
+          </div>
           <p>${member.bio}</p>
         </article>
       `
@@ -395,13 +426,15 @@ function renderMembers(members, container) {
   container.innerHTML = members
     .map(
       (member, index) => `
-        <a class="member-link-card reveal is-visible" href="${member.page_url}">
+        <${
+          member.page_url ? "a" : "article"
+        } class="member-link-card reveal is-visible${member.page_url ? "" : " is-static"}"${member.page_url ? ` href="${member.page_url}"` : ""}>
           <div class="member-icon${index % 2 ? " member-icon-alt" : ""}">${member.initials}</div>
           <div>
             <h3>${member.name}</h3>
             <p>${member.description}</p>
           </div>
-        </a>
+        </${member.page_url ? "a" : "article"}>
       `
     )
     .join("");

@@ -428,7 +428,7 @@ h2 {
 }
 
 .team-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .profile-avatar,
@@ -444,6 +444,33 @@ h2 {
   border: 1px solid rgba(134, 216, 255, 0.24);
   color: var(--accent);
   margin-bottom: 20px;
+}
+
+.profile-photo {
+  width: 100%;
+  aspect-ratio: 4 / 4.6;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 20px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-meta {
+  margin-bottom: 12px;
+}
+
+.profile-meta p {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-meta h3 {
+  margin: 0;
 }
 
 .split-section {
@@ -680,6 +707,10 @@ h2 {
   transition: transform 180ms ease, border-color 180ms ease;
 }
 
+.member-link-card.is-static {
+  cursor: default;
+}
+
 .page-links-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -688,6 +719,12 @@ h2 {
 .member-link-card:focus-visible {
   transform: translateY(-3px);
   border-color: rgba(134, 216, 255, 0.3);
+}
+
+.member-link-card.is-static:hover,
+.member-link-card.is-static:focus-visible {
+  transform: none;
+  border-color: var(--line);
 }
 
 .member-icon {
